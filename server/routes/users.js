@@ -8,15 +8,15 @@ router.post(
   '/signup',
   passportLocal.authenticate('local-signup', {
     successMessage: 'Yay!',
-    failureMessage: "Did'nt work bro",
+    failureMessage: "Didn't work bro",
   })
 );
 
 router.post(
   '/login',
   passport.authenticate('local-login', {
-    successRedirect: '/',
-    failureRedirect: '/error',
+    successMessage: 'Yay!',
+    failureMessage: "Didn't work bro",
   })
 );
 module.exports = router;

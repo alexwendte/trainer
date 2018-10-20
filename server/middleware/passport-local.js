@@ -13,19 +13,19 @@ passport.use(
       passReqToCallback: true,
     },
     (req, email, password, done) => {
-      console.log(email, password);
       User.findOne({ email: email }, (err, user) => {
         if (err) {
+          return done(null, false, err);
           return err;
         }
 
         // email not found
         if (!user) {
-          return done(null, false);
+          return done(null, false, 'email not found');
         }
         //Wrong password :(
         if (!user.validPassword(password)) {
-          return done(null, false);
+          return done(null, false, 'wrong password');
         }
 
         //all is well in authentication land
