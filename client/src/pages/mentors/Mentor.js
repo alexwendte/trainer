@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 export default class Mentor extends Component {
   render() {
-    const { name, rate, career, reviews, bio } = this.props.mentor;
+    const { _id, name, rate, career, reviews, bio } = this.props.mentor;
     return (
       <MentorWrapper>
         <p>{name}</p>
