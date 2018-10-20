@@ -12,7 +12,7 @@ const passport = require('passport');
 require('./middleware/passport_init')(passport);
 
 /******  ROUTES ******/
-const index = require('./routes/index');
+const mentors = require('./routes/mentors');
 const users = require('./routes/users');
 
 /******  DATABASE AND CONFIG ******/
@@ -63,7 +63,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/api/mentors', index);
+app.use('/api/mentors', mentors);
 app.use('/api/users', users);
 
 // catch 404 and forward to error handler
