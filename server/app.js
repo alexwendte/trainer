@@ -9,6 +9,8 @@ const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session);
 const passport = require('passport');
 
+require('./middleware/passport_init')(passport);
+
 /******  ROUTES ******/
 const index = require('./routes/index');
 const users = require('./routes/users');
@@ -20,7 +22,8 @@ require('./database/mongoose');
 /******** Session Storage *******/
 const store = new MongoDbStore({
   uri: process.env.MONGO_SESSION_STORE,
-  collection: 'mySessions',
+  databaseName: 'trainer_sessions',
+  collection: 'Sessions',
 });
 
 store.on('connected', function() {
@@ -51,7 +54,6 @@ app.use(
     secret: 'keyboard cat',
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
-      secure: true,
     },
     store: store,
     resave: true,

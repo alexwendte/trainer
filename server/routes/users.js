@@ -19,4 +19,13 @@ router.post(
     failureMessage: "Didn't work bro",
   })
 );
+
+router.get(
+  '/current_user', (req, res, next) => {
+    if(!req.user) {
+      res.status(401).send({});
+    }
+    res.status(200).send(req.user);
+  }
+)
 module.exports = router;

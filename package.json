@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "npm run start --prefix server",
-    "dev": "npm run server"
+    "client": "npm run start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "repository": {
     "type": "git",
@@ -17,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/alexwendte/trainer/issues"
   },
-  "homepage": "https://github.com/alexwendte/trainer#readme"
+  "homepage": "https://github.com/alexwendte/trainer#readme",
+  "devDependencies": {
+    "concurrently": "^4.0.1"
+  }
 }
