@@ -4,6 +4,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/User');
 const init = require('./passport_init');
 
+const _ = require('lodash');
+
 passport.use(
   'local-login',
   new LocalStrategy(
@@ -44,6 +46,7 @@ passport.use(
       passReqToCallback: true,
     },
     function(req, email, password, done) {
+      var is_member = _.pick(req.body, ['is_member']);
       User.findOne({ email: email }, (err, user) => {
         // user with email exists
         if (user) {
@@ -54,6 +57,7 @@ passport.use(
         let new_user = new User();
         new_user.email = email;
         new_user.password = new_user.generateHash(password);
+        new_user.is_member = is_member;
         new_user.save(err => {
           if (err) {
             return done(null, false, err);

@@ -15,6 +15,7 @@
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "helmet": "^3.14.0",
+    "lodash": "^4.17.11",
     "mongoose": "^5.3.4",
     "morgan": "~1.9.0",
     "nodemon": "^1.18.4",
