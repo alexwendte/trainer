@@ -61,7 +61,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// app.use('/', index);
+app.use('/api/mentors', index);
 app.use('/api/users', users);
 
 // catch 404 and forward to error handler
@@ -79,8 +79,8 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.send(err);
-  // res.render('error');
+  console.log(err);
+  res.send('error');
 });
 
 module.exports = app;
