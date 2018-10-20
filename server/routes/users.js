@@ -7,13 +7,13 @@ const passportLocal = require('../middleware/passport-local');
 router.post(
   '/signup',
   passportLocal.authenticate('local-signup', {
-    successRedirect: '/',
-    failureRedirect: '/error',
+    successMessage: 'Yay!',
+    failureMessage: "Did'nt work bro",
   })
 );
 
 router.post(
-  '/api/login',
+  '/login',
   passport.authenticate('local-login', {
     successRedirect: '/',
     failureRedirect: '/error',

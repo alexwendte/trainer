@@ -4,6 +4,7 @@ import { Router } from '@reach/router';
 import Header from 'Header';
 import Footer from 'Footer';
 import User from 'components/User';
+import Login from 'pages/Login';
 import Registration from 'pages/Registration';
 import Home from 'pages/Home';
 import './styles/App.css';
@@ -33,6 +34,7 @@ class App extends Component {
                   </Router>
                   <Router>
                     <Home path="/" />
+                    <Login path="/login" />
                     <Registration path="/registration" />
                   </Router>
                   <Router primary={false}>
