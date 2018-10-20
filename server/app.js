@@ -45,6 +45,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../client/build')));
+// Setup the express-session starge with a very secure secret key
 app.use(session({
   secret: 'keyboard cat',
   cookie: {
@@ -55,7 +56,8 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
-
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', index);
 app.use('/users', users);
