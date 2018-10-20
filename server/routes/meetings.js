@@ -15,10 +15,10 @@ router.get('/list', isAuthenticated, (req, res, next) => {
     .populate('studentID', 'name email career bio')
     .then((meetings, err) => {
         if (err) {
-           return res.status(400).json("An error has occured");
+           return res.status(400).json({message: "An error has occured"});
         }
 
-        res.status(200).json({ meetings });
+        res.status(200).json(meetings);
     });
 });
 
@@ -65,13 +65,13 @@ router.get('/meeting/:id', isAuthenticated, (req, res, next) => {
 router.patch('/meeting/:id', isAuthenticated, (req, res, next) => {
     var id = req.params.id;
     var {title, agenda, meetingDate} = _.pick(req.body, ['title', 'agenda', 'meetingDate']); 
-    if(!ObjectID.isValid(id)) return res.status(400).json('That is an invalid meeting ID');
+    if(!ObjectID.isValid(id)) return res.status(400).json({ message: 'That is an invalid meeting ID' });
 
     Meeting.findByIdAndUpdate(id, {title, agenda, meetingDate})
     .populate('mentorID', 'name email career rate bio')
     .populate('studentID', 'name email career bio')
     .then((meeting, err) => {
-        if(err) return res.status(400).json('An unexpected error has occured');
+        if(err) return res.status(400).json({message: 'An unexpected error has occured'});
         res.status(200).json({meeting, message: "Meeting updated successfully"});
 
     })
@@ -85,8 +85,8 @@ router.delete('/meeting/:id', isAuthenticated, (req, res, next) => {
 
     Meeting.findByIdAndDelete(id)
     .then((meeting, err) => {
-        if (err) return res.status(400).json({message: 'An error has occured'});
-        res.status(200).json({meeting, message: "Meeting deleted successfully"});
+        if (err) return res.status(400).json({ message: 'An error has occured' });
+        res.status(200).json({ meeting, message: "Meeting deleted successfully" });
     });
 });
 
