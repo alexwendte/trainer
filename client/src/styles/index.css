@@ -1,0 +1,16 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Rubik, arial, sans-serif;
+}
+input,
+textarea {
+  font-family: Rubik, arial;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 500;
+}

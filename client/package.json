@@ -1,20 +1,27 @@
 {
-  "name": "app",
+  "name": "trainer",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
-    "react-scripts": "2.0.5"
+    "react-scripts": "2.0.5",
+    "styled-components": "^3.4.9",
+    "axios": "^0.18.0",
+    "prop-types": "^15.6.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "devDependencies": {
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-jest": "^21.22.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "jest": "^23.6.0",
+    "react-testing-library": "^5.1.0"
   },
   "browserslist": [
     ">0.2%",
