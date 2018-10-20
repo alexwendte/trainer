@@ -14,6 +14,7 @@ require('./middleware/passport_init')(passport);
 /******  ROUTES ******/
 const mentors = require('./routes/mentors');
 const users = require('./routes/users');
+const meetings = require('./routes/meetings');
 
 /******  DATABASE AND CONFIG ******/
 require('dotenv').config();
@@ -64,6 +65,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/api/mentors', mentors);
+app.use('/api/meetings', meetings);
 app.use('/api/users', users);
 
 // catch 404 and forward to error handler
