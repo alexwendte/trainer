@@ -28,7 +28,7 @@ export default class Login extends Component {
         password: password.value,
       })
       .catch(err => {
-        console.log(err);
+        console.error(err);
         if (err.response.status === 401) {
           this.setState({ error: 'Incorrect Email or Password', submitted: true });
         }

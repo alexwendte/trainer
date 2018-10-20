@@ -14,7 +14,7 @@ export default class User extends Component {
       .me()
       .then(user => this.reset({ user }))
       .catch(error => {
-        console.log({ error });
+        console.error({ error });
         Promise.reject(this.reset({ error }));
       });
   }
@@ -28,7 +28,7 @@ export default class User extends Component {
           this.reset({ user });
         })
         .catch(error => {
-          console.log({ error });
+          console.error({ error });
           Promise.reject(this.reset({ error }));
         });
     }

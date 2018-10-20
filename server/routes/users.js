@@ -24,7 +24,8 @@ router.get('/current_user', (req, res, next) => {
   if (!req.user) {
     res.status(401).send({});
   }
-  res.status(200).json({ email: req.user.email });
+  const { name, email } = req.user;
+  res.status(200).json({ email, name });
 });
 
 router.get('/logout', (req, res, next) => {

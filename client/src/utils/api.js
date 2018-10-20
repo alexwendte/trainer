@@ -63,7 +63,6 @@ function logout() {
 }
 function login({ token }) {
   window.localStorage.setItem('token', token);
-  console.log('set Item');
   init({ token });
 }
 

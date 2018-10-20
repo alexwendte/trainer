@@ -27,24 +27,24 @@ export default class Registration extends Component {
 
   handleSubmit = ev => {
     ev.preventDefault();
-    const { email, password, confirmPassword, isMentor } = ev.currentTarget.elements;
+    const { name, email, password, confirmPassword, isMentor } = ev.currentTarget.elements;
     if (password.value !== confirmPassword.value) {
       this.setState({ error: 'Passwords do not match' });
       return;
     }
-    console.log(isMentor);
     api.auth
       .register({
+        name: name.value,
         email: email.value,
         password: password.value,
-        is_mentor: isMentor.value,
+        isMentor: isMentor.value,
       })
       .then(() => this.setState({ submitted: true }))
       .catch(err => {
         if (err.response.status === 401) {
           this.setState({ error: 'A user with that email already exists' });
         }
-        console.log(err.response.status);
+        console.error(err.response.status);
       });
   };
 
@@ -56,6 +56,10 @@ export default class Registration extends Component {
         <RegisterWrapper>
           <Heading>Create an Account!</Heading>
           <StyledForm onSubmit={this.handleSubmit}>
+            <InputGroup>
+              <label htmlFor="name">Full Name</label>
+              <Input type="name" id="name" required />
+            </InputGroup>
             <InputGroup>
               <label htmlFor="email">Email</label>
               <Input type="email" id="email" required />

@@ -10,7 +10,10 @@ mongoose
     console.log(`Mongo Database Connected at ${process.env.MONGODB_URI}`);
   })
   .catch(err => {
-    console.log('Database Connection Failed. Make sure your mongodb is running with the command mongod', err.messages);
+    console.error(
+      'Database Connection Failed. Make sure your mongodb is running with the command mongod',
+      err.messages
+    );
   });
 
 module.exports = { mongoose };
