@@ -13,7 +13,10 @@ export default class Registration extends Component {
   handleSubmit = ev => {
     ev.preventDefault();
     const { email, password, confirmPassword } = ev.currentTarget.elements;
-    if (password !== confirmPassword) this.setState({ error: 'Passwords do not match' });
+    if (password.value !== confirmPassword.value) {
+      this.setState({ error: 'Passwords do not match' });
+      return;
+    }
     api.auth
       .register({
         email: email.value,

@@ -30,7 +30,7 @@ const Header = ({ user, logout }) => (
       ) : (
         <div>
           <UserBtn to="/login">Login</UserBtn>
-          <UserBtn to="/register">Register</UserBtn>
+          <UserBtn to="/registration">Register</UserBtn>
         </div>
       )}
     </UserBtnsContainer>
