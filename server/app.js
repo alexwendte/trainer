@@ -1,24 +1,24 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var helmet = require('helmet');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var MongoDbStore = require('connect-mongodb-session')(session);
-var passport = require('passport');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const MongoDbStore = require('connect-mongodb-session')(session);
+const passport = require('passport');
 
 /******  ROUTES ******/
-var index = require('./routes/index');
-var users = require('./routes/users');
+const index = require('./routes/index');
+const users = require('./routes/users');
 
 /******  DATABASE AND CONFIG ******/
 require('dotenv').config();
 require('./database/mongoose');
 
 /******** Session Storage *******/
-var store = new MongoDbStore({
+const store = new MongoDbStore({
   uri: process.env.MONGO_SESSION_STORE,
   collection: 'mySessions'
 });
@@ -32,7 +32,7 @@ store.on('error', function(error) {
   assert.ok(false);
 });
 
-var app = express();
+const app = express();
 app.use(helmet)
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -45,6 +45,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../client/build')));
+// Setup the express-session starge with a very secure secret key
 app.use(session({
   secret: 'keyboard cat',
   cookie: {
@@ -55,14 +56,15 @@ app.use(session({
   resave: true,
   saveUninitialized: true
 }));
-
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', index);
 app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  const err = new Error('Not Found');
   err.status = 404;
   next(err);
 });

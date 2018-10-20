@@ -1,6 +1,6 @@
-mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const ObjectId = mongoose.SchemaTypes.ObjectId;
+const ObjectId = mongoose.SchemaTypes.ObjectId; 
 
 const UserSchema = new Schema ({
     email: {
@@ -18,6 +18,15 @@ const UserSchema = new Schema ({
     bio: String
 });
 
+// generate a hashed password
+UserSchema.methods.generateHash = function(password) {
+    return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+};
+
+// checking if password is valid
+UserSchema.methods.validPassword = function(password) {
+    return bcrypt.compareSync(password, this.local.password);
+};
 const User = mongoose.model('User', UserSchema);
 
 module.exports = User;
