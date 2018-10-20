@@ -11,7 +11,8 @@ const MeetingSchema = new Schema({
         require: "A meeting date is required"
     },
     created: {
-        type: Date
+        type: Date,
+        default: Date.now()
     },
     mentorID: {
         type: ObjectId,
@@ -31,7 +32,14 @@ const MeetingSchema = new Schema({
         type: String,
         required: "There must be a meeting title"
     },
-    assignments: [Assignment]
+    assignments: [{
+        type: ObjectId,
+        ref: 'Assignment'
+    }],
+    isAccepted: {
+        type: Boolean,
+        default: false
+    }
 });
 
 const Meeting = mongoose.model('Meeting', MeetingSchema);
