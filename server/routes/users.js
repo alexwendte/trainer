@@ -20,18 +20,16 @@ router.post(
   })
 );
 
-router.get(
-  '/current_user', (req, res, next) => {
-    if(!req.user) {
-      res.status(401).send({});
-    }
-    res.status(200).send(req.user.email);
+router.get('/current_user', (req, res, next) => {
+  if (!req.user) {
+    res.status(401).send({});
   }
-);
+  res.status(200).json({ email: req.user.email });
+});
 
 router.get('/logout', (req, res, next) => {
   req.logout();
-  res.status(200).send({ message: "Logout successful" });
+  res.status(200).send({ message: 'Logout successful' });
 });
 
 module.exports = router;

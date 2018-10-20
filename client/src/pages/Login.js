@@ -27,10 +27,6 @@ export default class Login extends Component {
         email: email.value,
         password: password.value,
       })
-      /* .then(res => {
-        console.log('logged in');
-        this.setState({ submitted: true });
-      }) */
       .catch(err => {
         console.log(err);
         if (err.response.status === 401) {
