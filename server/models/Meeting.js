@@ -30,7 +30,8 @@ const MeetingSchema = new Schema({
     title: {
         type: String,
         required: "There must be a meeting title"
-    }
+    },
+    assignments: [Assignment]
 });
 
 const Meeting = mongoose.model('Meeting', MeetingSchema);
