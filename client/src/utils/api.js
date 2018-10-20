@@ -42,11 +42,11 @@ const users = {
   create: user => requests.post('/users', user),
 };
 
-const transactions = {
-  delete: id => requests.delete(`/transactions/${id}`),
-  get: id => requests.get(id ? `/transactions/${id}` : '/transactions'),
-  update: (id, updates) => requests.put(`/transactions/${id}`, updates),
-  create: post => requests.post('/transactions', post),
+const mentors = {
+  delete: id => requests.delete(`/mentors/${id}`),
+  get: id => requests.get(id ? `/mentors/${id}` : '/mentors'),
+  update: (id, updates) => requests.put(`/mentors/${id}`, updates),
+  create: post => requests.post('/mentors', post),
 };
 
 // In the server api can use req.user.id to get the categories associated with a user
@@ -82,4 +82,4 @@ function init({
   });
 }
 
-export { init, users, transactions, categories, auth };
+export { init, users, mentors, categories, auth };

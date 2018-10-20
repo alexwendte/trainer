@@ -4,12 +4,11 @@ import { navigate } from '@reach/router';
 import * as api from '../utils/api';
 
 export default class User extends Component {
-  initialState = { user: null, error: null, pending: false, loggedIn: false };
+  resetState = { user: null, error: null, pending: false, loggedIn: false };
 
-  state = this.initialState;
+  state = { ...this.resetState, pending: true };
 
   componentDidMount() {
-    this.reset({ pending: true });
     return api.auth
       .me()
       .then(user => this.reset({ user }))
@@ -51,7 +50,7 @@ export default class User extends Component {
   };
 
   reset(overrides) {
-    const newState = { ...this.initialState, ...overrides };
+    const newState = { ...this.resetState, ...overrides };
     this.setState(newState);
     return newState;
   }
