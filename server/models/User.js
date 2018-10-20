@@ -4,6 +4,10 @@ const ObjectId = mongoose.SchemaTypes.ObjectId;
 const bcrypt = require('bcrypt');
 
 const UserSchema = new Schema({
+  name: {
+    type: String,
+    required: "A name is required"
+  },
   email: {
     type: String,
     required: 'Email is required',
@@ -13,8 +17,8 @@ const UserSchema = new Schema({
     type: String,
     required: 'Password is required, duh',
   },
-  is_mentor: Boolean,
-  is_student: Boolean,
+  isMentor: Boolean,
+  isStudent: Boolean,
   career: String,
   bio: String,
 });

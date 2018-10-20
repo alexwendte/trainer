@@ -25,7 +25,13 @@ router.get(
     if(!req.user) {
       res.status(401).send({});
     }
-    res.status(200).send(req.user);
+    res.status(200).send(req.user.email);
   }
-)
+);
+
+router.get('/logout', (req, res, next) => {
+  req.logout();
+  res.status(200).send({ message: "Logout successful" });
+});
+
 module.exports = router;
