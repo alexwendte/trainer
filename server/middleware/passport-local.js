@@ -32,7 +32,7 @@ passport.use('local-signup', new LocalStrategy(function(email, password) {
         }
 
         // user with email doesn exist so we make one
-        var new_user = new User();
+        let new_user = new User();
         new_user.email = email;
         new_user.password = new_user.generateHash(password);
         new_user.save((err) => {
@@ -42,4 +42,7 @@ passport.use('local-signup', new LocalStrategy(function(email, password) {
             return done(null, new_user);
         });
     })
-}))
+}));
+
+init();
+module.exports = passport;
