@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
       res.status(404).send({ message: 'Could not get any mentors' });
     }
 
-    res.status(200).send({ mentors });
+    res.status(200).json(mentors);
   });
 });
 
