@@ -22,7 +22,7 @@ router.post(
 
 router.get('/current_user', (req, res, next) => {
   if (!req.user) {
-    res.status(401).send({});
+    res.status(401).json({});
   }
   const { name, email } = req.user;
   res.status(200).json({ email, name });
@@ -30,7 +30,7 @@ router.get('/current_user', (req, res, next) => {
 
 router.get('/logout', (req, res, next) => {
   req.logout();
-  res.status(200).send({ message: 'Logout successful' });
+  res.status(200).json({ message: 'Logout successful' });
 });
 
 module.exports = router;

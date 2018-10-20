@@ -21,6 +21,7 @@ const UserSchema = new Schema({
   isStudent: Boolean,
   career: String,
   bio: String,
+  rate: Number
 });
 
 // generate a hashed password
