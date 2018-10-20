@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import styled, { ThemeProvider } from 'styled-components';
-import AmountInput from 'components/AmountInput';
-import Input from 'components/Input';
-import TextArea from 'components/TextArea';
+import { Router } from '@reach/router';
+import Header from 'Header';
+import Footer from 'Footer';
 import User from 'components/User';
+import Registration from 'pages/Registration';
+import Home from 'pages/Home';
 import './styles/App.css';
 
 const theme = {
@@ -22,15 +24,20 @@ class App extends Component {
     return (
       <ThemeProvider theme={theme}>
         <AppWrapper data-testid="app">
+          <Router>
+            <Header path="/*" />
+          </Router>
           <User>
             {({ user }) => (
-              <>
-                <AmountInput />
-                <Input />
-                <TextArea />
-              </>
+              <Router>
+                <Home path="/" />
+                <Registration path="/registration" />
+              </Router>
             )}
           </User>
+          <Router primary={false}>
+            <Footer path="/*" />
+          </Router>
         </AppWrapper>
       </ThemeProvider>
     );
