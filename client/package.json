@@ -2,6 +2,7 @@
   "name": "trainer",
   "version": "0.1.0",
   "private": false,
+  "proxy": "http://localhost:5000/",
   "dependencies": {
     "@reach/router": "^1.2.1",
     "axios": "^0.18.0",
