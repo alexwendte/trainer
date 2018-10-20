@@ -4,11 +4,19 @@ import styled from 'styled-components';
 import * as api from 'utils/api';
 import Flash from 'components/Flash';
 
-export default class Registration extends Component {
+export default class Login extends Component {
   state = {
     error: null,
     submitted: false,
   };
+
+  componentDidUpdate() {
+    if (this.state.submitted) {
+      setTimeout(() => {
+        this.setState({ submitted: false, error: '' });
+      }, 2000);
+    }
+  }
 
   handleSubmit = ev => {
     ev.preventDefault();
@@ -18,14 +26,20 @@ export default class Registration extends Component {
         email: email.value,
         password: password.value,
       })
-      .then(() => this.setState({ submitted: true }));
+      .then(res => this.setState({ submitted: true }))
+      .catch(err => {
+        if (err.response.status === 401) {
+          console.log('Error');
+          this.setState({ error: 'Incorrect Email or Password', submitted: true });
+        }
+      });
   };
 
   render() {
     const { submitted, error } = this.state;
     return (
       <>
-        <Flash submitted={submitted} error={error} />
+        <Flash submitted={submitted} error={error} successMessage="" />
         <RegisterWrapper>
           <Heading>Login 👍</Heading>
           <StyledForm onSubmit={this.handleSubmit}>

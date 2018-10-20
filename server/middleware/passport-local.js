@@ -29,7 +29,7 @@ passport.use(
         if (!user.validPassword(password)) {
           return done(null, false, 'wrong password');
         }
-
+        console.log('All is good!');
         //all is well in authentication land
         return done(null, user);
       });
@@ -62,7 +62,8 @@ passport.use(
           if (err) {
             return done(null, false, err);
           }
-          return done(null, false, new_user);
+          console.log('succes');
+          return done(null, new_user);
         });
       });
     }

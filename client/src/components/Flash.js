@@ -1,34 +1,52 @@
-import * as React from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Transition } from 'react-spring';
+import PropTypes from 'prop-types';
 
-const Flash = ({ submitted, error }) => (
-  <>
-    <Transition
-      from={{ transform: 'translateY(-100%)' }}
-      enter={{ transform: 'translateY(0)' }}
-      leave={{ transform: 'translateY(-100%)' }}
-    >
-      {submitted
-        && !error
-        // eslint-disable-next-line
-        && (({ transform }) => <ResponseSuccess style={{ transform }}>Transaction Created Successfully</ResponseSuccess>)}
-    </Transition>
-    <Transition
-      from={{ transform: 'translateY(-100%)' }}
-      enter={{ transform: 'translateY(0)' }}
-      leave={{ transform: 'translateY(-100%)' }}
-    >
-      {error
-        // eslint-disable-next-line
-        && (({ transform }) => (
-          <ResponseError data-testid="create-error" style={{ transform }}>
-            {error}
-          </ResponseError>
-        ))}
-    </Transition>
-  </>
-);
+class Flash extends React.Component {
+  static defaultProps = {
+    error: null,
+    successMessage: '',
+  };
+
+  render() {
+    const { successMessage, error, submitted } = this.props;
+    return (
+      <>
+        <Transition
+          from={{ transform: 'translateY(-100%)' }}
+          enter={{ transform: 'translateY(0)' }}
+          leave={{ transform: 'translateY(-100%)' }}
+        >
+          {submitted
+            && !error
+            && successMessage.length > 0
+            // eslint-disable-next-line
+            && (({ transform }) => <ResponseSuccess style={{ transform }}>{successMessage}</ResponseSuccess>)}
+        </Transition>
+        <Transition
+          from={{ transform: 'translateY(-100%)' }}
+          enter={{ transform: 'translateY(0)' }}
+          leave={{ transform: 'translateY(-100%)' }}
+        >
+          {error
+            // eslint-disable-next-line
+            && (({ transform }) => (
+              <ResponseError data-testid="create-error" style={{ transform }}>
+                {error}
+              </ResponseError>
+            ))}
+        </Transition>
+      </>
+    );
+  }
+}
+
+Flash.propTypes = {
+  error: PropTypes.string,
+  submitted: PropTypes.bool.isRequired,
+  successMessage: PropTypes.string,
+};
 
 export default Flash;
 

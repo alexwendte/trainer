@@ -3,12 +3,27 @@ import Input from 'components/Input';
 import styled from 'styled-components';
 import * as api from 'utils/api';
 import Flash from 'components/Flash';
+import { navigate } from '@reach/router';
 
 export default class Registration extends Component {
   state = {
     error: null,
     submitted: false,
   };
+
+  componentDidUpdate() {
+    const { submitted, error } = this.state;
+    if (submitted && !error) {
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    }
+    if (error) {
+      setTimeout(() => {
+        this.setState({ submitted: false, error: '' });
+      }, 2000);
+    }
+  }
 
   handleSubmit = ev => {
     ev.preventDefault();
@@ -22,14 +37,20 @@ export default class Registration extends Component {
         email: email.value,
         password: password.value,
       })
-      .then(() => this.setState({ submitted: true }));
+      .then(() => this.setState({ submitted: true }))
+      .catch(err => {
+        if (err.response.status === 401) {
+          this.setState({ error: 'A user with that email already exists' });
+        }
+        console.log(err.response.status);
+      });
   };
 
   render() {
     const { submitted, error } = this.state;
     return (
       <>
-        <Flash submitted={submitted} error={error} />
+        <Flash submitted={submitted} error={error} successMessage="You Registered Successfully! 👍" />
         <RegisterWrapper>
           <Heading>Create an Account!</Heading>
           <StyledForm onSubmit={this.handleSubmit}>

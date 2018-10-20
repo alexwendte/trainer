@@ -17,6 +17,7 @@ const theme = {
   lightGrey: '#f1f3f4',
   maxWidth: '1000px',
   white: '#fff',
+  warning: '#bb0000',
 };
 
 class App extends Component {
