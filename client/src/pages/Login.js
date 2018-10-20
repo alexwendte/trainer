@@ -3,6 +3,7 @@ import Input from 'components/Input';
 import styled from 'styled-components';
 import * as api from 'utils/api';
 import Flash from 'components/Flash';
+import { navigate } from '@reach/router';
 
 export default class Login extends Component {
   state = {
@@ -11,7 +12,11 @@ export default class Login extends Component {
   };
 
   componentDidUpdate() {
-    if (this.state.submitted) {
+    const { submitted, error } = this.state;
+    if (submitted && !error) {
+      navigate('/');
+    }
+    if (error) {
       setTimeout(() => {
         this.setState({ submitted: false, error: '' });
       }, 2000);
@@ -29,7 +34,6 @@ export default class Login extends Component {
       .then(res => this.setState({ submitted: true }))
       .catch(err => {
         if (err.response.status === 401) {
-          console.log('Error');
           this.setState({ error: 'Incorrect Email or Password', submitted: true });
         }
       });
@@ -60,7 +64,7 @@ export default class Login extends Component {
 }
 
 const RegisterWrapper = styled.div`
-  padding: 2rem;
+  padding: 2rem 0;
 `;
 
 const Heading = styled.h1`
