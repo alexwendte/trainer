@@ -28,17 +28,8 @@ const auth = {
     logout();
     return Promise.resolve({ user: null });
   },
-  login: form => requests.post('/users/login', form).then(data => {
-      // login({ token: data.user.token });
-      console.log(data);
-      return data;
-    }),
-  register: form => requests.post('/users/signup', form).then(data => {
-      // login({ token: data.user.token });
-      // return data;
-      console.log(data);
-      return 'good';
-    }),
+  login: form => requests.post('/users/login', form),
+  register: form => requests.post('/users/signup', form),
 };
 
 const users = {
