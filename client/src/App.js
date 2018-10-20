@@ -19,25 +19,29 @@ const theme = {
 };
 
 class App extends Component {
-  // I can just pass user to ItemForm, no need for context!
   render() {
     return (
       <ThemeProvider theme={theme}>
         <AppWrapper data-testid="app">
-          <Router>
-            <Header path="/*" />
-          </Router>
           <User>
-            {({ user }) => (
-              <Router>
-                <Home path="/" />
-                <Registration path="/registration" />
-              </Router>
-            )}
+            {({ user, pending, logout }) => (pending ? (
+                <h2>Loading...</h2>
+              ) : (
+                <>
+                  <Router>
+                    <Header path="/*" user={user} logout={logout} />
+                  </Router>
+                  <Router>
+                    <Home path="/" />
+                    <Registration path="/registration" />
+                  </Router>
+                  <Router primary={false}>
+                    <Footer path="/*" />
+                  </Router>
+                </>
+              ))
+            }
           </User>
-          <Router primary={false}>
-            <Footer path="/*" />
-          </Router>
         </AppWrapper>
       </ThemeProvider>
     );

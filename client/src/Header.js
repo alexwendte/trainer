@@ -1,31 +1,51 @@
 import React from 'react';
 import styled from 'styled-components';
 import colors from 'utils/colors';
+import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
 
-const Header = () => (
+const Header = ({ user, logout }) => (
   <HeaderContainer>
-    <h2 className="heading">The Wendtes</h2>
-    <ul className="links">
-      <li className="link">
-        <Link to="/">Home</Link>
-      </li>
-      <li className="link">
-        <Link to="/about-us">About Us</Link>
-      </li>
-      <li className="link">
-        <Link to="/posts">Posts</Link>
-      </li>
-      <li className="link">
-        <Link to="/register">Register</Link>
-      </li>
-      <li className="link">
-        <Link to="/login">Login</Link>
-      </li>
-    </ul>
+    {() => {
+      console.log(user);
+    }}
+    <h2 className="heading">Trainer</h2>
+    <div className="links">
+      <Link className="link" to="/">
+        Home
+      </Link>
+      <Link className="link" to="/mentors">
+        Mentors
+      </Link>
+      <Link className="link" to="/categories">
+        Categories
+      </Link>
+    </div>
+    <UserBtnsContainer>
+      {user ? (
+        <div>
+          <UserBtn data-testid="username-display">{user.username.split('@')[0]}</UserBtn>
+          <UserBtn onClick={logout}>Logout</UserBtn>
+        </div>
+      ) : (
+        <div>
+          <UserBtn to="/login">Login</UserBtn>
+          <UserBtn to="/register">Register</UserBtn>
+        </div>
+      )}
+    </UserBtnsContainer>
   </HeaderContainer>
 );
 export default Header;
+
+Header.propTypes = {
+  user: PropTypes.object,
+  logout: PropTypes.func.isRequired,
+};
+
+Header.defaultProps = {
+  user: null,
+};
 
 const HeaderContainer = styled.div`
   background: ${props => props.theme.primary};
@@ -36,6 +56,7 @@ const HeaderContainer = styled.div`
   .heading {
     display: inline-block;
     color: ${colors.white};
+    width: 22.2rem;
   }
   .links {
     display: inline-block;
@@ -44,10 +65,29 @@ const HeaderContainer = styled.div`
   .link {
     display: inline-block;
     padding-left: 2rem;
-    font-size: 2.4rem;
+    font-size: 2rem;
     font-weight: 600;
-    a {
-      color: ${colors.white};
-    }
+    color: ${colors.white};
+  }
+`;
+
+const UserBtnsContainer = styled.div`
+  display: inline-block;
+`;
+
+const UserBtn = styled(Link)`
+  margin-left: 2rem;
+  border-radius: 5px;
+  color: ${props => props.theme.primary};
+  background: ${props => props.theme.white};
+  border: none;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  font-size: 1.8rem;
+  transition: all 0.3s cubic-bezier(0.895, 0.03, 0.685, 0.22);
+  display: inline-block;
+  &:hover {
+    transform: translateY(-1px);
+    transition: all 0.15s cubic-bezier(0.895, 0.03, 0.685, 0.22);
   }
 `;
