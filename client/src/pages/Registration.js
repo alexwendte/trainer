@@ -27,15 +27,17 @@ export default class Registration extends Component {
 
   handleSubmit = ev => {
     ev.preventDefault();
-    const { email, password, confirmPassword } = ev.currentTarget.elements;
+    const { email, password, confirmPassword, isMentor } = ev.currentTarget.elements;
     if (password.value !== confirmPassword.value) {
       this.setState({ error: 'Passwords do not match' });
       return;
     }
+    console.log(isMentor);
     api.auth
       .register({
         email: email.value,
         password: password.value,
+        is_mentor: isMentor.value,
       })
       .then(() => this.setState({ submitted: true }))
       .catch(err => {
@@ -66,6 +68,17 @@ export default class Registration extends Component {
               <label htmlFor="confirmPassword">Confirm Password</label>
               <Input type="password" id="confirmPassword" required />
             </InputGroup>
+            <FieldSetWrapper>
+              <fieldset>
+                <legend>Select a User Role</legend>
+                <RoleInputs>
+                  <label htmlFor="isMentor">Student</label>
+                  <input type="radio" name="isMentor" value={false} id="studentInput" defaultChecked />
+                  <label htmlFor="incomeInput">Mentor</label>
+                  <input type="radio" name="isMentor" value id="mentorInput" />
+                </RoleInputs>
+              </fieldset>
+            </FieldSetWrapper>
             <SubmitButton type="submit">Create</SubmitButton>
           </StyledForm>
         </RegisterWrapper>
@@ -111,6 +124,33 @@ const InputGroup = styled.div`
     border: none;
     background: ${props => props.theme.lightGrey};
   }
+`;
+
+const FieldSetWrapper = styled.div`
+  margin: 1rem 0 2rem;
+  border-radius: 5px;
+
+  legend {
+    font-size: 2rem;
+  }
+
+  label,
+  input {
+    display: inline-block;
+    width: auto;
+    font-weight: 400;
+    height: 3.2rem;
+    line-height: 3.2rem;
+  }
+  input {
+    margin-top: 0;
+    vertical-align: middle;
+    background: ${props => props.theme.black};
+  }
+`;
+
+const RoleInputs = styled.div`
+  padding-left: 1.5rem;
 `;
 
 const SubmitButton = styled.button`
