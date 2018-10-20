@@ -15,10 +15,10 @@ router.get('/list', isAuthenticated, (req, res, next) => {
     .populate('studentID', 'name email career bio')
     .then((meetings, err) => {
         if (err) {
-           return res.status(400).send("An error has occured");
+           return res.status(400).json("An error has occured");
         }
 
-        res.status(200).send({ meetings });
+        res.status(200).json({ meetings });
     });
 });
 
@@ -38,8 +38,8 @@ router.post('/create', isAuthenticated, (req, res, nex) => {
         title
     });
     meeting.save().then((meeting, err) => {
-        if(err) return res.send(400).status({ message: 'An error has occured'});
-        res.status(201).send({
+        if(err) return res.status(400).json({ message: 'An error has occured'});
+        res.status(201).json({
             meeting,
             message: "Your meeting has been requested"
         });
@@ -50,14 +50,14 @@ router.post('/create', isAuthenticated, (req, res, nex) => {
 router.get('/meeting/:id', isAuthenticated, (req, res, next) => {
     var id = req.params.id;
 
-    if (!ObjectID.isValid(id)) return res.status(400).send({ message: "That is not a valid meeting ID"});
+    if (!ObjectID.isValid(id)) return res.status(400).json({ message: "That is not a valid meeting ID"});
 
     Meeting.findById(id)
     .populate('mentorID', 'name email career rate bio')
     .populate('studentID', 'name email career bio')
     .then((meeting, err) => {
-        if (err) return res.status(400).send({message: 'An error has occured'});
-        res.status(200).send(meeting);
+        if (err) return res.status(400).json({message: 'An error has occured'});
+        res.status(200).json(meeting);
     });
 });
 
@@ -65,14 +65,14 @@ router.get('/meeting/:id', isAuthenticated, (req, res, next) => {
 router.patch('/meeting/:id', isAuthenticated, (req, res, next) => {
     var id = req.params.id;
     var {title, agenda, meetingDate} = _.pick(req.body, ['title', 'agenda', 'meetingDate']); 
-    if(!ObjectID.isValid(id)) return res.status(400).send('That is an invalid meeting ID');
+    if(!ObjectID.isValid(id)) return res.status(400).json('That is an invalid meeting ID');
 
     Meeting.findByIdAndUpdate(id, {title, agenda, meetingDate})
     .populate('mentorID', 'name email career rate bio')
     .populate('studentID', 'name email career bio')
     .then((meeting, err) => {
-        if(err) return res.status(400).send('An unexpected error has occured');
-        res.status(200).send({meeting, message: "Meeting updated successfully"});
+        if(err) return res.status(400).json('An unexpected error has occured');
+        res.status(200).json({meeting, message: "Meeting updated successfully"});
 
     })
 });
@@ -81,12 +81,12 @@ router.patch('/meeting/:id', isAuthenticated, (req, res, next) => {
 router.delete('/meeting/:id', isAuthenticated, (req, res, next) => {
     var id = req.params.id;
 
-    if (!ObjectID.isValid(id)) return res.status(400).send({ message: "That is not a valid meeting ID"});
+    if (!ObjectID.isValid(id)) return res.status(400).json({ message: "That is not a valid meeting ID"});
 
     Meeting.findByIdAndDelete(id)
     .then((meeting, err) => {
-        if (err) return res.status(400).send({message: 'An error has occured'});
-        res.status(200).send({meeting, message: "Meeting deleted successfully"});
+        if (err) return res.status(400).json({message: 'An error has occured'});
+        res.status(200).json({meeting, message: "Meeting deleted successfully"});
     });
 });
 
