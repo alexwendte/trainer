@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import Input from 'components/Input';
 import styled from 'styled-components';
-import * as api from 'utils/api';
 import Flash from 'components/Flash';
-import { navigate } from '@reach/router';
+import PropTypes from 'prop-types';
 
 export default class Login extends Component {
   state = {
@@ -12,13 +11,10 @@ export default class Login extends Component {
   };
 
   componentDidUpdate() {
-    const { submitted, error } = this.state;
-    if (submitted && !error) {
-      navigate('/');
-    }
+    const { error } = this.state;
     if (error) {
       setTimeout(() => {
-        this.setState({ submitted: false, error: '' });
+        this.setState({ error: '' });
       }, 2000);
     }
   }
@@ -26,13 +22,17 @@ export default class Login extends Component {
   handleSubmit = ev => {
     ev.preventDefault();
     const { email, password } = ev.currentTarget.elements;
-    api.auth
+    this.props
       .login({
         email: email.value,
         password: password.value,
       })
-      .then(res => this.setState({ submitted: true }))
+      /* .then(res => {
+        console.log('logged in');
+        this.setState({ submitted: true });
+      }) */
       .catch(err => {
+        console.log(err);
         if (err.response.status === 401) {
           this.setState({ error: 'Incorrect Email or Password', submitted: true });
         }
@@ -45,7 +45,12 @@ export default class Login extends Component {
       <>
         <Flash submitted={submitted} error={error} successMessage="" />
         <RegisterWrapper>
-          <Heading>Login 👍</Heading>
+          <Heading>
+            Login{' '}
+            <span role="img" aria-label="Thumbs up">
+              👍
+            </span>
+          </Heading>
           <StyledForm onSubmit={this.handleSubmit}>
             <InputGroup>
               <label htmlFor="email">Email</label>
@@ -55,13 +60,17 @@ export default class Login extends Component {
               <label htmlFor="password">Password</label>
               <Input type="password" id="password" required />
             </InputGroup>
-            <SubmitButton type="submit">Create</SubmitButton>
+            <SubmitButton type="submit">Log In!</SubmitButton>
           </StyledForm>
         </RegisterWrapper>
       </>
     );
   }
 }
+
+Login.propTypes = {
+  login: PropTypes.func.isRequired,
+};
 
 const RegisterWrapper = styled.div`
   padding: 2rem 0;
@@ -71,6 +80,9 @@ const Heading = styled.h1`
   color: ${props => props.theme.primary};
   text-align: center;
   padding-bottom: 2rem;
+  span {
+    font-size: 3rem;
+  }
 `;
 
 const StyledForm = styled.form`

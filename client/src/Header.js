@@ -4,38 +4,40 @@ import colors from 'utils/colors';
 import PropTypes from 'prop-types';
 import { Link } from '@reach/router';
 
-const Header = ({ user, logout }) => (
-  <HeaderContainer>
-    {() => {
-      console.log(user);
-    }}
-    <h2 className="heading">Trainer</h2>
-    <div className="links">
-      <Link className="link" to="/">
-        Home
-      </Link>
-      <Link className="link" to="/mentors">
-        Mentors
-      </Link>
-      <Link className="link" to="/categories">
-        Categories
-      </Link>
-    </div>
-    <UserBtnsContainer>
-      {user ? (
-        <div>
-          <UserBtn data-testid="username-display">{user.username.split('@')[0]}</UserBtn>
-          <UserBtn onClick={logout}>Logout</UserBtn>
-        </div>
-      ) : (
-        <div>
-          <UserBtn to="/login">Login</UserBtn>
-          <UserBtn to="/registration">Register</UserBtn>
-        </div>
-      )}
-    </UserBtnsContainer>
-  </HeaderContainer>
-);
+const Header = ({ user, logout }) => {
+  console.log('in Header', user);
+  return (
+    <HeaderContainer>
+      <h2 className="heading">Trainer</h2>
+      <div className="links">
+        <Link className="link" to="/">
+          Home
+        </Link>
+        <Link className="link" to="/mentors">
+          Mentors
+        </Link>
+        <Link className="link" to="/categories">
+          Categories
+        </Link>
+      </div>
+      <UserBtnsContainer>
+        {user ? (
+          <div>
+            <UserBtn to="/Profile">{user.email} View Profile</UserBtn>
+            <UserBtn onClick={logout} to="/">
+              Logout
+            </UserBtn>
+          </div>
+        ) : (
+          <div>
+            <UserBtn to="/login">Login</UserBtn>
+            <UserBtn to="/registration">Register</UserBtn>
+          </div>
+        )}
+      </UserBtnsContainer>
+    </HeaderContainer>
+  );
+};
 export default Header;
 
 Header.propTypes = {

@@ -14,26 +14,30 @@ class Flash extends React.Component {
     return (
       <>
         <Transition
-          from={{ transform: 'translateY(-100%)' }}
-          enter={{ transform: 'translateY(0)' }}
-          leave={{ transform: 'translateY(-100%)' }}
+          from={{ opacity: 0, height: 0 }}
+          enter={{ opacity: 1, height: 'auto' }}
+          leave={{ opacity: 0, height: 0 }}
         >
           {submitted
             && !error
             && successMessage.length > 0
             // eslint-disable-next-line
-            && (({ transform }) => <ResponseSuccess style={{ transform }}>{successMessage}</ResponseSuccess>)}
+            && (({ opacity, height }) => (
+              <ResponseSuccess data-testid="create-error" style={{ opacity, height }}>
+                <Message>{successMessage}</Message>
+              </ResponseSuccess>
+            ))}
         </Transition>
         <Transition
-          from={{ transform: 'translateY(-100%)' }}
-          enter={{ transform: 'translateY(0)' }}
-          leave={{ transform: 'translateY(-100%)' }}
+          from={{ opacity: 0, height: 0 }}
+          enter={{ opacity: 1, height: 'auto' }}
+          leave={{ opacity: 0, height: 0 }}
         >
           {error
             // eslint-disable-next-line
-            && (({ transform }) => (
-              <ResponseError data-testid="create-error" style={{ transform }}>
-                {error}
+            && (({ opacity, height }) => (
+              <ResponseError data-testid="create-error" style={{ opacity, height }}>
+                <Message>{error}</Message>
               </ResponseError>
             ))}
         </Transition>
@@ -50,18 +54,17 @@ Flash.propTypes = {
 
 export default Flash;
 
-const Response = styled.h3`
+const Message = styled.h3`
+  padding: 0.5rem;
   text-align: center;
-  padding: 0.5rem 0;
   color: white;
-  width: 100%;
-  font-size: 1.6rem;
+  font-size: 2rem;
   position: relative;
-  z-index: -1;
 `;
-const ResponseSuccess = styled(Response)`
+
+const ResponseSuccess = styled.div`
   background: ${props => props.theme.green};
 `;
-const ResponseError = styled(Response)`
+const ResponseError = styled.div`
   background: ${props => props.theme.warning};
 `;

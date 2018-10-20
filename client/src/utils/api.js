@@ -16,7 +16,7 @@ const requests = {
 const auth = {
   me() {
     if (!isLoggedIn) return Promise.resolve({ user: null });
-    return requests.get('/auth/me').catch(err => {
+    return requests.get('/users/current_user').catch(err => {
       if (err.response.status === 401) {
         logout();
         return { user: null };
@@ -26,9 +26,12 @@ const auth = {
   },
   logout: () => {
     logout();
+    requests.get('users/logout');
     return Promise.resolve({ user: null });
   },
-  login: form => requests.post('/users/login', form),
+  login: form => requests.post('/users/login', form).then(() => {
+      login({ token: 'logged in!' });
+    }),
   register: form => requests.post('/users/signup', form),
 };
 
@@ -59,7 +62,8 @@ function logout() {
   init({ token: null });
 }
 function login({ token }) {
-  window.localStorage.setItem('token');
+  window.localStorage.setItem('token', token);
+  console.log('set Item');
   init({ token });
 }
 

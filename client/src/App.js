@@ -28,7 +28,7 @@ class App extends Component {
       <ThemeProvider theme={theme}>
         <AppWrapper data-testid="app">
           <User>
-            {({ user, pending, logout }) => (pending ? (
+            {({ user, pending, login, logout }) => (pending ? (
                 <h2>Loading...</h2>
               ) : (
                 <>
@@ -37,7 +37,7 @@ class App extends Component {
                   </Router>
                   <Router>
                     <Home path="/" />
-                    <Login path="/login" />
+                    <Login path="/login" login={login} />
                     <Registration path="/registration" />
                   </Router>
                   <Router primary={false}>
