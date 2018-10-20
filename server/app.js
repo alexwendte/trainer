@@ -2,15 +2,38 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
+var helmet = require('helmet');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var MongoDbStore = require('connect-mongodb-session')(session);
+var passport = require('passport');
 
+/******  ROUTES ******/
 var index = require('./routes/index');
 var users = require('./routes/users');
+
+/******  DATABASE AND CONFIG ******/
 require('dotenv').config();
 require('./database/mongoose');
-var app = express();
 
+/******** Session Storage *******/
+var store = new MongoDbStore({
+  uri: process.env.MONGO_SESSION_STORE,
+  collection: 'mySessions'
+});
+
+store.on('connected', function() {
+  store.client;
+});
+
+store.on('error', function(error) {
+  assert.ifError(error);
+  assert.ok(false);
+});
+
+var app = express();
+app.use(helmet)
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', '--no-view');
@@ -21,7 +44,18 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../client/public')));
+app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(session({
+  secret: 'keyboard cat',
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
+    secure: true
+  },
+  store: store,
+  resave: true,
+  saveUninitialized: true
+}));
+
 
 app.use('/', index);
 app.use('/users', users);
