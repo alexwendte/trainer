@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const UserSchema = new Schema({
   name: {
     type: String,
-    required: "A name is required"
+    required: 'A name is required',
   },
   email: {
     type: String,
@@ -21,7 +21,8 @@ const UserSchema = new Schema({
   isStudent: Boolean,
   career: String,
   bio: String,
-  rate: Number
+  rate: Number,
+  category: String,
 });
 
 // generate a hashed password

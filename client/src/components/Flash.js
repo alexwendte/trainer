@@ -10,7 +10,7 @@ class Flash extends React.Component {
   };
 
   render() {
-    const { successMessage, error, submitted } = this.props;
+    const { successMessage, error, submitted, fixed } = this.props;
     return (
       <>
         <Transition
@@ -23,7 +23,7 @@ class Flash extends React.Component {
             && successMessage.length > 0
             // eslint-disable-next-line
             && (({ opacity, height }) => (
-              <ResponseSuccess data-testid="create-error" style={{ opacity, height }}>
+              <ResponseSuccess data-testid="create-error" className={fixed ? 'fixed' : ''} style={{ opacity, height }}>
                 <Message>{successMessage}</Message>
               </ResponseSuccess>
             ))}
@@ -36,7 +36,7 @@ class Flash extends React.Component {
           {error
             // eslint-disable-next-line
             && (({ opacity, height }) => (
-              <ResponseError data-testid="create-error" style={{ opacity, height }}>
+              <ResponseError data-testid="create-error" className={fixed ? 'fixed' : ''} style={{ opacity, height }}>
                 <Message>{error}</Message>
               </ResponseError>
             ))}
@@ -64,7 +64,21 @@ const Message = styled.h3`
 
 const ResponseSuccess = styled.div`
   background: ${props => props.theme.green};
+  &.fixed {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 10;
+  }
 `;
 const ResponseError = styled.div`
   background: ${props => props.theme.warning};
+  &.fixed {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 10;
+  }
 `;

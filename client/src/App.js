@@ -7,6 +7,7 @@ import User from 'components/User';
 import Login from 'pages/Login';
 import Registration from 'pages/Registration';
 import Mentors from 'pages/mentors/Mentors';
+import Profile from 'pages/mentors/Profile';
 import Home from 'pages/Home';
 import './styles/App.css';
 
@@ -41,6 +42,7 @@ class App extends Component {
                     <Login path="/login" login={login} />
                     <Registration path="/registration" />
                     <Mentors path="/mentors" />
+                    <Profile path="/profile" user={user} />
                   </Router>
                   <Router primary={false}>
                     <Footer path="/*" />
