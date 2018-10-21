@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-
+const transactionsEvents = require('../middleware/events')
 const { isAuthenticated, validateObjectID } = require('../middleware/middleware_mixins');
 const Meeting = require('../models/Meeting');
 
@@ -22,7 +22,7 @@ router.get('/list', isAuthenticated, (req, res, next) => {
 });
 
 // CREATE A MEETING
-router.post('/create', isAuthenticated, (req, res, nex) => {
+router.post('/create', isAuthenticated, (req, res, next) => {
     let studentID = req.user._id;
     let { 
         mentorID, 
@@ -40,6 +40,7 @@ router.post('/create', isAuthenticated, (req, res, nex) => {
     });
     meeting.save().then((meeting, err) => {
         if(err) return res.status(400).json({ message: 'An error has occured'});
+        transactionsEvents.emit('meetingRequested', meeting, req.body);
         res.status(201).json({
             meeting,
             message: "Your meeting has been requested"
@@ -63,13 +64,16 @@ router.get('/meeting/:id', isAuthenticated, validateObjectID, (req, res, next) =
 // UPDATE A MEETING
 router.patch('/meeting/:id', isAuthenticated, validateObjectID, (req, res, next) => {
     let id = req.params.id;
-    let {title, agenda, meetingDate} = req.body; 
+    let {title, agenda, meetingDate, isAccepted} = req.body; 
 
-  Meeting.findByIdAndUpdate(id, { title, agenda, meetingDate }, { new: true })
+  Meeting.findByIdAndUpdate(id, { title, agenda, meetingDate, isAccepted }, { new: true })
     .populate('mentorID', 'name email career rate bio')
     .populate('studentID', 'name email career bio')
     .then((meeting, err) => {
       if (err) return res.status(400).json({ message: 'An unexpected error has occured' });
+      if(isAccepted) {
+          transactionEvents.emit('meetingCompleted', meeting, req.body)
+      }
       res.status(200).json({ meeting, message: 'Meeting updated successfully' });
     });
 });

@@ -41,8 +41,8 @@ const MeetingSchema = new Schema({
     type: Boolean,
     default: false,
   },
-  
   initialMessage: String,
+  transactionID: String
 });
 
 const Meeting = mongoose.model('Meeting', MeetingSchema);

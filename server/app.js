@@ -8,16 +8,16 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoDbStore = require('connect-mongodb-session')(session);
 const passport = require('passport');
-
+require('dotenv').config();
 require('./middleware/passport_init')(passport);
 
 /******  ROUTES ******/
 const mentors = require('./routes/mentors');
 const users = require('./routes/users');
 const meetings = require('./routes/meetings');
+const payments = require('./routes/payments');
 
 /******  DATABASE AND CONFIG ******/
-require('dotenv').config();
 require('./database/mongoose');
 
 /******** Session Storage *******/
@@ -38,9 +38,6 @@ store.on('error', function(error) {
 
 const app = express();
 app.use(helmet());
-// view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', '--no-view');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -67,6 +64,7 @@ app.use(passport.session());
 app.use('/api/mentors', mentors);
 app.use('/api/meetings', meetings);
 app.use('/api/users', users);
+app.use('/api/payments', payments)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
