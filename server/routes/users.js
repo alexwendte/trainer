@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const isAuthenticated = require('../middleware/is_logged_in');
+const { isAuthenticated, validateObjectID } = require('../middleware/middleware_mixins');
 const User = require('../models/User');
 
-const _ = require('lodash');
-var { ObjectID } = require('mongodb');
 const passport = require('passport');
 const passportLocal = require('../middleware/passport-local');
 
@@ -38,20 +36,19 @@ router.get('/logout', (req, res, next) => {
   res.status(200).json({ message: 'Logout successful' });
 });
 
-router.get('/profile/:id', isAuthenticated, (req, res, next) => {
+router.get('/profile/:id', isAuthenticated, validateObjectID, (req, res, next) => {
   var id = req.params.id;
 
-  if(!ObjectID.isValid(id)) return res.status(400).json({ message: "Invalid ID for a User" })
   if (String(req.user._id) !== id) return res.status(403).json({ message: "You do not have permission to view this page"});
 
   User.findById(id).then((user, err) => {
     if(err) return res.status(400).json({ message: "User could not be fetched"});
 
-    res.status(200).send(user)
+    res.status(200).json(user);
   })
 });
 
-router.patch('/update/:id', isAuthenticated, (req, res, next) => {
+router.patch('/update/:id', isAuthenticated, validateObjectID, (req, res, next) => {
   var id = req.params.id;
   var {
     career, 
@@ -59,9 +56,7 @@ router.patch('/update/:id', isAuthenticated, (req, res, next) => {
     rate, 
     name, 
     email, 
-    password } = _.pick(req.body, ['career', 'bio', 'rate', 'email', 'name', 'password'])
-
-  if(!ObjectID.isValid(id)) return res.status(400).json({ message: "Invalid ID for a User" })
+    password } = req.body;
 
   if (String(req.user._id) !== id) return res.status(403).json({ message: "You do not have permission to edit this page"})
   User.findByIdAndUpdate(id, {career, bio, rate, name, email, password}, { new: true })
@@ -74,8 +69,6 @@ router.patch('/update/:id', isAuthenticated, (req, res, next) => {
 router.delete('/delete/:id', isAuthenticated, (req, res, next) => {
   var id = req.params.id;
 
-  if(!ObjectID.isValid(id)) return res.status(400).json({ message: "Invalid ID for a User" })
-  
   if (String(req.user._id) !== id) return res.status(403).json({ message: "You do not have permission to edit this page"})
   User.findByIdAndDelete(id).then((user, err) => {
     if(err) res.status(400).json({ message: "The user could not be deleted"});

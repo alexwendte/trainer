@@ -1,14 +1,13 @@
 const express = require('express');
 const router = express.Router();
-var { ObjectID } = require('mongodb');
-const isAuthenticated = require('../middleware/is_logged_in');
-const _ = require('lodash');
+const mongoose = require('mongoose');
+
+const { isAuthenticated, validateObjectID } = require('../middleware/middleware_mixins');
 const Meeting = require('../models/Meeting');
-const Assignment = require('../models/Assignment');
 
 // GET ALL MEETINGS
 router.get('/list', isAuthenticated, (req, res, next) => {
-  var query = { $or: [{ studentID: req.user._id }, { mentorID: req.user._id }] };
+    let query = { $or: [{studentID: req.user._id}, {mentorID: req.user._id }] };
 
   Meeting.find(query)
     .populate('mentorID', 'name email career rate bio')
@@ -24,30 +23,33 @@ router.get('/list', isAuthenticated, (req, res, next) => {
 
 // CREATE A MEETING
 router.post('/create', isAuthenticated, (req, res, nex) => {
-  const studentID = req.user._id;
-  const { mentorID, meetingDate, agenda, initialMessage, title } = req.body;
-  var meeting = new Meeting({
-    studentID,
-    mentorID,
-    meetingDate,
-    initialMessage,
-    agenda,
-    title,
-  });
-  meeting.save().then((meeting, err) => {
-    if (err) return res.status(400).json({ message: 'An error has occured' });
-    res.status(201).json({
-      meeting,
-      message: 'Your meeting has been requested',
+    let studentID = req.user._id;
+    let { 
+        mentorID, 
+        meetingDate, 
+        agenda,
+        initialMessage, 
+        title } = req.body;
+    let meeting = new Meeting({
+        studentID,
+        mentorID,
+        meetingDate,
+        initialMessage,
+        agenda,
+        title
     });
-  });
+    meeting.save().then((meeting, err) => {
+        if(err) return res.status(400).json({ message: 'An error has occured'});
+        res.status(201).json({
+            meeting,
+            message: "Your meeting has been requested"
+        });
+    });
 });
 
 // GET A MEETING BY ID
-router.get('/meeting/:id', isAuthenticated, (req, res, next) => {
-  var id = req.params.id;
-
-  if (!ObjectID.isValid(id)) return res.status(400).json({ message: 'That is not a valid meeting ID' });
+router.get('/meeting/:id', isAuthenticated, validateObjectID, (req, res, next) => {
+    let id = req.params.id;
 
   Meeting.findById(id)
     .populate('mentorID', 'name email career rate bio')
@@ -59,10 +61,9 @@ router.get('/meeting/:id', isAuthenticated, (req, res, next) => {
 });
 
 // UPDATE A MEETING
-router.patch('/meeting/:id', isAuthenticated, (req, res, next) => {
-  var id = req.params.id;
-  var { title, agenda, meetingDate } = _.pick(req.body, ['title', 'agenda', 'meetingDate']);
-  if (!ObjectID.isValid(id)) return res.status(400).json({ message: 'That is an invalid meeting ID' });
+router.patch('/meeting/:id', isAuthenticated, validateObjectID, (req, res, next) => {
+    let id = req.params.id;
+    let {title, agenda, meetingDate} = req.body; 
 
   Meeting.findByIdAndUpdate(id, { title, agenda, meetingDate }, { new: true })
     .populate('mentorID', 'name email career rate bio')
@@ -74,10 +75,8 @@ router.patch('/meeting/:id', isAuthenticated, (req, res, next) => {
 });
 
 // DELETE A MEETING
-router.delete('/meeting/:id', isAuthenticated, (req, res, next) => {
-  var id = req.params.id;
-
-  if (!ObjectID.isValid(id)) return res.status(400).json({ message: 'That is not a valid meeting ID' });
+router.delete('/meeting/:id', isAuthenticated, validateObjectID, (req, res, next) => {
+    let id = req.params.id;
 
   Meeting.findByIdAndDelete(id).then((meeting, err) => {
     if (err) return res.status(400).json({ message: 'An error has occured' });
@@ -88,26 +87,96 @@ router.delete('/meeting/:id', isAuthenticated, (req, res, next) => {
 /******* Asignments API *******/
 
 // GET ALL ASSIGNMENTS
-router.get('/assignments/', isAuthenticated, (req, res, next) => {
-  next();
+router.get('/meeting/:meeting_id/assignments/list', isAuthenticated, validateObjectID, (req, res, next) => {
+    let meeting_id = req.params.meeting_id;
+
+    Meeting.findById(meeting_id).then((meeting, err) => {
+        if(err) return res.status(404).json({message: "Could not find that meeting"});
+        
+        res.status(200).json({
+            assignments: meeting.assignments
+        });
+    });
 });
 
 // CREATE AN ASSIGNMENT
-router.post('/assignments/', isAuthenticated, (req, res, next) => {
-  next();
+router.post('/meeting/:meeting_id/assignments/create', isAuthenticated, validateObjectID, (req, res, next) => {
+    let meeting_id = req.params.meeting_id;
+
+    Meeting.findById(meeting_id).then((meeting, err) => {
+        if(err) return res.status(404).json({message: "Could not find that meeting"});
+        
+        meeting.assignments.push({
+            description: req.body.description,
+            dueDate: new Date(req.body.dueDate),
+            assignedBy: meeting.mentorID,
+            assignedTo: meeting.studentID
+        });
+        meeting.save();
+        res.status(201).json({
+            meeting, 
+            assignment: meeting.assignments[meeting.assignments.length - 1], 
+            message: "A new assignment has been created!"
+        })
+    });
 });
 
 // GET ASSIGNMENT BY ID
-router.get('/assignments/:id', isAuthenticated, (req, res, next) => {
-  next();
+router.get('/meeting/:meeting_id/assignments/:assignment_id', isAuthenticated, validateObjectID,  (req, res, next) => {
+    let meeting_id = req.params.meeting_id;
+    let assignment_id = req.params.assignment_id;
+
+    Meeting.findById(meeting_id).then((meeting, err) => {
+        if(err) return res.status(404).json({message: "Could not find that meeting"});
+        let assignment = meeting.assignments.id(mongoose.Types.ObjectId(assignment_id));
+
+        if(!assignment) return res.status(404).json({message: "An assignment with that ID could not be found."});
+        res.status(200).json({assignment});
+    });
 });
 // UPDATE AN ASSIGNMENT
-router.patch('/assignments/:id', isAuthenticated, (req, res, next) => {
-  next();
+router.patch('/meeting/:meeting_id/assignments/:assignment_id', isAuthenticated, validateObjectID, (req, res, next) => {
+    let meeting_id = req.params.meeting_id;
+    let assignment_id = req.params.assignment_id;
+    
+    let {
+        description,
+        dueDate, 
+        isComplete, 
+    } = req.body
+
+    Meeting.findById(meeting_id).then((meeting, err) => {
+        if(err) return res.status(404).json({message: "Could not find that meeting"});
+        
+        let assignment = meeting.assignments.id(mongoose.Types.ObjectId(assignment_id));
+        let completeDate = isComplete ? new Date() : null;
+        
+        if(!assignment) return res.status(404).json({message: "An assignment with that ID could not be found."});
+        assignment.set({
+            description,
+            dueDate,
+            isComplete,
+            completeDate
+        });
+        // Save the meeting so that the sub documents can be updated
+        meeting.save();
+        res.status(200).json({assignment});
+    });
 });
 // DELETE AN ASSIGNMENT
-router.delete('/assignments/:id', isAuthenticated, (req, res, next) => {
-  next();
+router.delete('/meeting/:meeting_id/assignments/:assignment_id', isAuthenticated, validateObjectID, (req, res, next) => {
+    let meeting_id = req.params.meeting_id;
+    let assignment_id = req.params.assignment_id;
+
+    Meeting.findById(meeting_id).then((meeting, err) => {
+        if(err) return res.status(404).json({message: "Could not find that meeting"});
+
+        meeting.assignments.id(mongoose.Types.ObjectId(assignment_id)).remove();
+        
+        // Save the meeting so that the sub documents can be updated
+        meeting.save();
+        res.status(200).json({message: "Assignment removed successfully"});
+    });
 });
 
 module.exports = router;

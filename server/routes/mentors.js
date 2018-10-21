@@ -6,7 +6,7 @@ var User = require('../models/User');
 router.get('/', function(req, res, next) {
   User.find({ isMentor: true }).then((mentors, err) => {
     if (err) {
-      res.status(404).send({ message: 'Could not get any mentors' });
+      res.status(404).json({ message: 'Could not get any mentors' });
     }
 
     res.status(200).json(mentors);
