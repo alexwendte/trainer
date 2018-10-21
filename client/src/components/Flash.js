@@ -7,6 +7,7 @@ class Flash extends React.Component {
   static defaultProps = {
     error: null,
     successMessage: '',
+    fixed: false,
   };
 
   render() {
@@ -50,12 +51,13 @@ Flash.propTypes = {
   error: PropTypes.string,
   submitted: PropTypes.bool.isRequired,
   successMessage: PropTypes.string,
+  fixed: PropTypes.bool,
 };
 
 export default Flash;
 
 const Message = styled.h3`
-  padding: 0.5rem;
+  padding: 0.5rem 2rem;
   text-align: center;
   color: white;
   font-size: 2rem;

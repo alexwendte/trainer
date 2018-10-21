@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Input from 'components/Input';
 import styled from 'styled-components';
 import * as api from 'utils/api';
 import { SubmitButton } from 'styles/comp';
@@ -7,6 +6,7 @@ import MentorCard from './MentorCard';
 
 export default class Mentors extends Component {
   state = {
+    // eslint-disable-next-line
     mentors: null,
     sortedMentors: null,
     currentSortStrategy: 'review',
@@ -14,6 +14,7 @@ export default class Mentors extends Component {
 
   async componentDidMount() {
     const mentors = await api.mentors.get();
+    // eslint-disable-next-line
     this.setState({ mentors, sortedMentors: mentors });
     this.sort({ type: 'review' });
   }

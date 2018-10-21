@@ -37,6 +37,8 @@ export default class CreateMeeting extends Component {
         mentorID: this.props.mentor._id,
       };
 
+      console.log(meeting);
+
       this.setState({ submitted: true });
       setTimeout(() => {
         this.setState({ submitted: false, meeting, stage: 2 });
@@ -108,7 +110,7 @@ export default class CreateMeeting extends Component {
                   <Heading>New Meeting</Heading>
                   <Close onClick={this.close}>X</Close>
                 </Header>
-                <Flash submitted={submitted} successMessage="Meeting Created!' 🎉" />
+                <Flash submitted={submitted} successMessage="Meeting Created! 🎉" />
                 <SubHeading>
                   Meeting with {mentor.name} <Cost>Cost: {`$${mentor.rate}` || 'Free'}</Cost>
                 </SubHeading>
@@ -234,7 +236,7 @@ const Modal = styled.div`
 
 const ModalWrapper = styled.div`
   background: ${props => props.theme.lightGray};
-  min-width: 60rem;
+  min-width: 70rem;
   min-height: 40rem;
 `;
 

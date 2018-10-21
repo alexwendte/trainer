@@ -39,7 +39,8 @@ router.get('/mentorlist', isAuthenticated, (req, res, next) => {
 // CREATE A MEETING
 router.post('/create', isAuthenticated, (req, res, next) => {
   let studentID = req.user._id;
-  let { mentorID, meetingDate, agenda, initialMessage, title } = req.body;
+  console.log(req.body);
+  let { mentorID, meetingDate, agenda, initialMessage, title } = req.body.meeting;
   let meeting = new Meeting({
     studentID,
     mentorID,
