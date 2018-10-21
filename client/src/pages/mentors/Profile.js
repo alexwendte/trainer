@@ -54,10 +54,12 @@ export default class Profile extends Component {
       bio,
       rate: dirtyRate,
       career,
+      avatar,
       // isMentor,
       category,
     } = ev.currentTarget.elements;
-    const [junk, rate = 0] = dirtyRate && dirtyRate.value.split('$');
+    const stringRate = dirtyRate && dirtyRate.value.toString();
+    const rate = stringRate.includes('$') ? stringRate.substr(1) : stringRate;
     try {
       await api.auth.verify({ email: this.state.fullUser.email, password: currentPassword.value });
     } catch (error) {
@@ -95,6 +97,7 @@ export default class Profile extends Component {
         email: email.value,
         phoneNumber: phoneNumber.value,
         name: name.value,
+        avatar: avatar.value,
         // isMentor: isMentor.value,
       })
       .then(() => this.setState({ submitted: true }));
@@ -103,7 +106,7 @@ export default class Profile extends Component {
 
   render() {
     const { submitted, error, fullUser, meetings } = this.state;
-    const { name, email, career, category, rate, bio, isMentor, phoneNumber } = fullUser;
+    const { name, email, career, category, rate, bio, isMentor, phoneNumber, avatar } = fullUser;
     return (
       <>
         <Flash submitted={submitted} error={error} fixed successMessage="Your Profile Was Modified ⚡" />
@@ -134,6 +137,10 @@ export default class Profile extends Component {
                 <label htmlFor="career">Career</label>
                 <Input type="text" id="career" value={career} />
               </InputGroup>
+              <InputGroup>
+                <label htmlFor="avatar">Avatar</label>
+                <Input type="text" id="avatar" value={avatar} />
+              </InputGroup>
               {isMentor && (
                 <>
                   <InputGroup>
@@ -142,7 +149,7 @@ export default class Profile extends Component {
                   </InputGroup>
                   <InputGroup>
                     <label htmlFor="rate">Rate Per Meeting</label>
-                    <AmountInput type="text" id="rate" value={rate} />
+                    <AmountInput type="text" id="rate" value={rate ? `$${rate}` : ''} />
                   </InputGroup>
                 </>
               )}

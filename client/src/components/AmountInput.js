@@ -55,12 +55,13 @@ export default class AmountInput extends React.Component {
 
   handleBlur = () => {
     this.setState(state => {
-      const noDollar = state.inputValue.replace('$', '');
+      const val = state.inputValue.toString();
+      const noDollar = val.replace('$', '');
       const formatted = `$${parseFloat(noDollar).toFixed(2)}`;
-      if (state.inputValue === '') {
+      if (val === '') {
         return { inputValue: '', invalid: false };
       }
-      if (state.inputValue === '$') {
+      if (val === '$') {
         return { inputValue: '', invalid: true };
       }
       return { inputValue: formatted, invalid: false };
