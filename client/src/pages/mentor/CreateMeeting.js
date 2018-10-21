@@ -120,6 +120,7 @@ export default class CreateMeeting extends Component {
                       onChange={this.handleDateChange}
                       showTimeSelect
                       dateFormat="LLL"
+                      required
                     />
                   </MyDatePicker>
                   <Form

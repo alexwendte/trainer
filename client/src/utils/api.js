@@ -60,8 +60,8 @@ const categories = {
 };
 
 const meetings = {
-  delete: id => requests.delete(`/meetings/${id}`),
-  get: id => requests.get(id ? `/meetings/${id}` : '/meetings'),
+  delete: id => requests.delete(`/meetings/meeting/${id}`),
+  get: () => requests.get(`/meetings/list`),
   getMentorList: () => requests.get(`/meetings/mentorlist`),
   update: (id, updates) => requests.patch(`/meetings/meeting/${id}`, updates),
   create: meeting => requests.post('/meetings/create', meeting),

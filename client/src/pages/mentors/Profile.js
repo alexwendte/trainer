@@ -19,11 +19,9 @@ export default class Profile extends Component {
   };
 
   async componentDidMount() {
-    const fullUser = await api.users.get(this.props.user._id);
-    let meetings = null;
-    if (fullUser.isMentor) {
-      meetings = await api.meetings.getMentorList();
-    }
+    const userPromise = api.users.get(this.props.user._id);
+    const meetingsPromise = api.meetings.get();
+    const [fullUser, meetings] = await Promise.all([userPromise, meetingsPromise]);
     this.setState({ fullUser, meetings });
   }
 
@@ -110,9 +108,9 @@ export default class Profile extends Component {
     return (
       <>
         <Flash submitted={submitted} error={error} fixed successMessage="Your Profile Was Modified ⚡" />
-        <RegisterWrapper>
-          <Heading>Modify Your Profile</Heading>
-          {fullUser.name && (
+        {fullUser.name && (
+          <RegisterWrapper>
+            <Heading>Modify Your Profile</Heading>
             <StyledForm onSubmit={this.handleSubmit}>
               <InputGroup>
                 <label htmlFor="name">Full Name</label>
@@ -198,15 +196,13 @@ export default class Profile extends Component {
                 Modify My Information 👉
               </SubmitButton>
             </StyledForm>
-          )}
-          {isMentor && (
             <Meetings>
               {meetings.map(meeting => (
-                <Meeting key={meeting._id} meeting={meeting} />
+                <Meeting key={meeting._id} meeting={meeting} isMentor={isMentor} />
               ))}
             </Meetings>
-          )}
-        </RegisterWrapper>
+          </RegisterWrapper>
+        )}
       </>
     );
   }
