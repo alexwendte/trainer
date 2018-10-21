@@ -8,17 +8,23 @@ import Flash from 'components/Flash';
 import PropTypes from 'prop-types';
 import { navigate } from '@reach/router';
 import { SubmitButton } from 'styles/comp';
+import Meeting from './Meeting';
 
 export default class Profile extends Component {
   state = {
     error: null,
     submitted: false,
     fullUser: {},
+    meetings: null,
   };
 
   async componentDidMount() {
     const fullUser = await api.users.get(this.props.user._id);
-    this.setState({ fullUser });
+    let meetings = null;
+    if (fullUser.isMentor) {
+      meetings = await api.meetings.getMentorList();
+    }
+    this.setState({ fullUser, meetings });
   }
 
   componentDidUpdate() {
@@ -96,7 +102,7 @@ export default class Profile extends Component {
   };
 
   render() {
-    const { submitted, error, fullUser } = this.state;
+    const { submitted, error, fullUser, meetings } = this.state;
     const { name, email, career, category, rate, bio, isMentor, phoneNumber } = fullUser;
     return (
       <>
@@ -186,6 +192,13 @@ export default class Profile extends Component {
               </SubmitButton>
             </StyledForm>
           )}
+          {isMentor && (
+            <Meetings>
+              {meetings.map(meeting => (
+                <Meeting key={meeting._id} meeting={meeting} />
+              ))}
+            </Meetings>
+          )}
         </RegisterWrapper>
       </>
     );
@@ -270,3 +283,5 @@ const Required = styled.span`
   color: ${props => props.theme.warning};
   font-weight: bold;
 `;
+
+const Meetings = styled.div``;

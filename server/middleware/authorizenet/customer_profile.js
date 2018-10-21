@@ -111,7 +111,7 @@ function authorizeTransaction(paymentType, address, meeting) {
   let transaction = new APIContracts.TransactionRequestType();
   transaction.setTransactionType(APIContracts.TransactionTypeEnum.AUTHONLYTRANSACTION);
   transaction.setPayment(paymentType);
-  transaction.setAmount(11.00);
+  transaction.setAmount(11.0);
   transaction.setBillTo(address);
 
   var createRequest = new APIContracts.CreateTransactionRequest();
@@ -123,6 +123,7 @@ function authorizeTransaction(paymentType, address, meeting) {
     var apiResponse = ctrl.getResponse();
 
     var response = new APIContracts.CreateTransactionResponse(apiResponse);
+    if (!response.transactionResponse) return;
     let transactionId = parseInt(response.transactionResponse.transId);
     if (transactionId !== 0) {
       Meeting.findByIdAndUpdate(meeting._id, { transactionID: transactionId }).exec();
@@ -139,34 +140,34 @@ function createLineItem(meeting_id, mentor_rate) {
   lineItem_id1.setUnitPrice(mentor_rate);
 }
 
-function chargePreviousTransaction(transaction_id, meeting, student){
-    var merchant = initialize();
-	var orderDetails = new APIContracts.OrderType();
-	orderDetails.setInvoiceNumber('INV-12345');
-	orderDetails.setDescription('Product Description');
+function chargePreviousTransaction(transaction_id, meeting, student) {
+  var merchant = initialize();
+  var orderDetails = new APIContracts.OrderType();
+  orderDetails.setInvoiceNumber('INV-12345');
+  orderDetails.setDescription('Product Description');
 
-	var transactionRequestType = new APIContracts.TransactionRequestType();
-	transactionRequestType.setTransactionType(APIContracts.TransactionTypeEnum.PRIORAUTHCAPTURETRANSACTION);
-	transactionRequestType.setRefTransId(transaction_id);
-	transactionRequestType.setOrder(orderDetails);
+  var transactionRequestType = new APIContracts.TransactionRequestType();
+  transactionRequestType.setTransactionType(APIContracts.TransactionTypeEnum.PRIORAUTHCAPTURETRANSACTION);
+  transactionRequestType.setRefTransId(transaction_id);
+  transactionRequestType.setOrder(orderDetails);
 
-	var createRequest = new APIContracts.CreateTransactionRequest();
-	createRequest.setMerchantAuthentication(merchant);
-	createRequest.setTransactionRequest(transactionRequestType);
+  var createRequest = new APIContracts.CreateTransactionRequest();
+  createRequest.setMerchantAuthentication(merchant);
+  createRequest.setTransactionRequest(transactionRequestType);
 
-	//pretty print request
-	console.log(JSON.stringify(createRequest.getJSON(), null, 2));
-		
-	var ctrl = new APIControllers.CreateTransactionController(createRequest.getJSON());
+  //pretty print request
+  console.log(JSON.stringify(createRequest.getJSON(), null, 2));
 
-	ctrl.execute(function(){
-		var apiResponse = ctrl.getResponse();
-		
-		var response = new APIContracts.CreateTransactionResponse(apiResponse);
+  var ctrl = new APIControllers.CreateTransactionController(createRequest.getJSON());
 
-		//pretty print response
-        console.log(JSON.stringify(response, null, 2));
-    })
+  ctrl.execute(function() {
+    var apiResponse = ctrl.getResponse();
+
+    var response = new APIContracts.CreateTransactionResponse(apiResponse);
+
+    //pretty print response
+    console.log(JSON.stringify(response, null, 2));
+  });
 }
 
 function getProfile(user_id) {
