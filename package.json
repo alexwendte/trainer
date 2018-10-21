@@ -11,7 +11,7 @@
     "install-client": "npm install --prefix client",
     "client": "npm run start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "npm run install-server && npm run install-client && npm run build",
+    "heroku-prebuild": "npm run install-server && npm run install-client && npm run build",
     "start": "npm run server"
   },
   "repository": {
