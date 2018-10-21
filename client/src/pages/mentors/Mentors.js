@@ -23,6 +23,7 @@ export default class Mentors extends Component {
           <label htmlFor="category">Choose a Category</label>
           <Input type="category" id="category" placeholder="React.js" />
         </InputGroup>
+        <SubHeading>Set Up a Meeting With one of these Mentors</SubHeading>
         {mentors && (
           <MentorsList>
             {mentors.map(mentor => (
@@ -35,10 +36,20 @@ export default class Mentors extends Component {
   }
 }
 
+const MentorsWrapper = styled.div`
+  padding: 2rem;
+  max-width: 110rem;
+  margin: 0 auto;
+`;
 const Heading = styled.h1`
   color: ${props => props.theme.gray};
   text-align: center;
   padding-bottom: 2rem;
+`;
+
+const SubHeading = styled.h2`
+  padding-top: 2rem;
+  color: ${props => props.theme.primary};
 `;
 
 const InputGroup = styled.div`
@@ -61,9 +72,5 @@ const InputGroup = styled.div`
     border: none;
     background: ${props => props.theme.lightGrey};
   }
-`;
-
-const MentorsWrapper = styled.div`
-  padding: 2rem;
 `;
 const MentorsList = styled.div``;
