@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 let transactionsEvents = new EventEmitter();
 const { 
     authorizeTransaction,
+    chargePreviousTransaction,
     createProfile, 
     createCreditCard, 
     createAddress,
@@ -34,8 +35,7 @@ transactionsEvents.addListener('mentorCompletedSignup', function(user, paymentIn
 // Meeting accepted charge the card, credit the mentor
 transactionsEvents.addListener('meetingAccepted', function(meeting, req){
     //Meeting is marked as accepted, so that means that we should charge the transaction
-    console.log(meeting, req)
-
+    chargePreviousTransaction(meeting.transactionID, meeting, meeting.studentID);
 });
 
 transactionsEvents.addListener('meetingRequested', function(meeting, req) {
@@ -57,15 +57,7 @@ transactionsEvents.addListener('meetingRequested', function(meeting, req) {
     .populate('mentorID', '-password')
     .populate('studentID', '-password').then((meeting, err) => {
         authorizeTransaction(creditCard, customerAddress, meeting);
-
     })
-}) 
-
-// Transaction Authorization successfull
-transactionsEvents.addListener('transactionAuthorizationSuccess', function(data) {
-    console.log('Transaction Authorization successful', data);
-})
-
-
+});
 
 module.exports = transactionsEvents;

@@ -30,7 +30,7 @@ router.post('/profile/create', isAuthenticated, (req, res, next) => {
 
 router.post('/transaction', isAuthenticated, (req, res, next) => {
     let { cardNumber, 
-        cardExpiration, 
+        cardExpiration,
         firstName, 
         lastName,
         address,
