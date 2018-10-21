@@ -22,7 +22,9 @@ export default class Mentors extends Component {
     const { value } = ev.currentTarget;
 
     this.setState(state => {
-      const newMentors = state.mentors.filter(mentor => mentor.category.includes(value.toLowerCase()));
+      const newMentors = state.mentors.filter(
+        mentor => mentor.category && mentor.category.toLowerCase().includes(value.toLowerCase())
+      );
       return { sortedMentors: newMentors };
     });
   };
@@ -57,12 +59,7 @@ export default class Mentors extends Component {
           <>
             <InputGroup>
               <SubHeading htmlFor="category">Filter by a Specialty</SubHeading>
-              <CategoryInput
-                type="text"
-                onChange={this.handleCategoryChange}
-                id="category"
-                placeholder="React.js"
-              />
+              <CategoryInput type="text" onChange={this.handleCategoryChange} id="category" placeholder="React.js" />
             </InputGroup>
             <Sort>
               <SubHeading>Order By 👇</SubHeading>
