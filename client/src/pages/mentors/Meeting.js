@@ -65,4 +65,11 @@ Meeting.propTypes = {
   isMentor: PropTypes.bool.isRequired,
 };
 
-const MeetingWrapper = styled.div``;
+const MeetingWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem;
+  button {
+    flex: unset;
+  }
+`;

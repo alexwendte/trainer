@@ -197,6 +197,12 @@ export default class Profile extends Component {
               </SubmitButton>
             </StyledForm>
             <Meetings>
+              <Heading>Meetings</Heading>
+              <Headers>
+                <span>Title</span>
+                <span className="date">Date</span>
+                <div />
+              </Headers>
               {meetings.map(meeting => (
                 <Meeting key={meeting._id} meeting={meeting} isMentor={isMentor} />
               ))}
@@ -287,4 +293,21 @@ const Required = styled.span`
   font-weight: bold;
 `;
 
-const Meetings = styled.div``;
+const Meetings = styled.div`
+  padding-top: 6rem;
+  max-width: 60rem;
+  margin: 0 auto;
+`;
+
+const Headers = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2rem;
+  span {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  span.date {
+    padding-right: 17rem;
+  }
+`;
