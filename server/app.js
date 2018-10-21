@@ -64,7 +64,15 @@ app.use(passport.session());
 app.use('/api/mentors', mentors);
 app.use('/api/meetings', meetings);
 app.use('/api/users', users);
-app.use('/api/payments', payments)
+app.use('/api/payments', payments);
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build/index.html'), err => {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
