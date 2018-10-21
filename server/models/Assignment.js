@@ -26,7 +26,4 @@ const AssignmentSchema = new Schema({
         ref: 'User'
     }
 });
-
-const Assignment = mongoose.model('Assignment', AssignmentSchema);
-
-module.exports = Assignment;
+module.exports = AssignmentSchema;

@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const ObjectId = mongoose.SchemaTypes.ObjectId;
-
-const Assignment = require('./Assignment');
+const AssignmentSchema = require('./Assignment');
 
 const MeetingSchema = new Schema({
   meetingDate: {
@@ -37,10 +36,12 @@ const MeetingSchema = new Schema({
       ref: 'Assignment',
     },
   ],
+  assignments: [AssignmentSchema],
   isAccepted: {
     type: Boolean,
     default: false,
   },
+  
   initialMessage: String,
 });
 
