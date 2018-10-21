@@ -46,7 +46,7 @@ const mentors = {
   delete: id => requests.delete(`/mentors/${id}`),
   get: id => requests.get(id ? `/mentors/${id}` : '/mentors'),
   update: (id, updates) => requests.put(`/mentors/${id}`, updates),
-  create: post => requests.post('/mentors', post),
+  create: mentor => requests.post('/mentors', mentor),
 };
 
 // In the server api can use req.user.id to get the categories associated with a user
@@ -55,6 +55,13 @@ const categories = {
   get: id => requests.get(id ? `/categories/${id}` : '/categories'),
   update: (id, updates) => requests.put(`/categories/${id}`, updates),
   create: post => requests.post('/categories', post),
+};
+
+const meetings = {
+  delete: id => requests.delete(`/meetings/${id}`),
+  get: id => requests.get(id ? `/meetings/${id}` : '/meetings'),
+  update: (id, updates) => requests.put(`/meetings/${id}`, updates),
+  create: meeting => requests.post('/meetings/create', meeting),
 };
 
 function logout() {
@@ -82,4 +89,4 @@ function init({
   });
 }
 
-export { init, users, mentors, categories, auth };
+export { init, users, mentors, categories, auth, meetings };
