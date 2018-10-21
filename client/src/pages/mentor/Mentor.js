@@ -32,7 +32,12 @@ export default class Mentor extends Component {
     const { name, email, bio, avatar, rate, review, category, career } = this.state.mentor;
     return (
       <>
-        <CreateMeeting open={this.state.modalOpen} mentor={this.state.mentor} close={this.closeModal} />
+        <CreateMeeting
+          open={this.state.modalOpen}
+          mentor={this.state.mentor}
+          user={this.props.user}
+          close={this.closeModal}
+        />
         <PageWrapper>
           {name && (
             <>

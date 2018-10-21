@@ -43,13 +43,12 @@ export default class CreateMeeting extends Component {
       }, 3000);
     }
     if (stage === 2) {
-      console.log(ev.currentTarget.elements);
       const {
         address,
         city,
         state,
         zip,
-        cardNumber,
+        cardNumber: cardNumberDirty,
         cardExpiration: dirtyExpiration,
         cardCode,
       } = ev.currentTarget.elements;
@@ -58,6 +57,10 @@ export default class CreateMeeting extends Component {
       const year = dirty.substr(dirty.length - 2);
       const cardExpiration = `${month}${year}`;
 
+      const [firstName, lastName] = this.props.user.name.split(' ');
+
+      const cardNumber = cardNumberDirty.value.split('-').join('');
+
       api.meetings
         .create({
           meeting: this.state.meeting,
@@ -65,41 +68,36 @@ export default class CreateMeeting extends Component {
           city: city.value,
           state: state.value,
           zip: zip.value,
-          cardNumber: cardNumber.value,
+          cardNumber,
           cardExpiration,
           cardCode: cardCode.value,
+          firstName,
+          lastName,
         })
         .then(() => {
           this.setState({ submitted: true });
           setTimeout(() => {
-            this.setState({ submitted: false });
+            this.setState({ submitted: false, stage: 1 });
             this.props.close();
           }, 2500);
-        })
-        .catch(err => console.error(err));
-
-      /* api.meetings
-        .create({
-          title: title.value,
-          agenda: agenda.value,
-          initialMessage: initialMessage.value,
-          meetingDate: date.toISOString(),
-          mentorID: this.props.mentor._id,
-        })
-        .then(() => {
-          this.setState({ submitted: true });
-          setTimeout(() => {
-            this.setState({ submitted: false });
-            this.props.close();
-          }, 2500);
-        }); */
+        });
     }
   };
 
-  render() {
-    const { mentor, open, close } = this.props;
-    const { submitted, calendarDate, stage, meeting } = this.state;
+  close = () => {
+    this.setState(
+      () => ({ stage: 1 }),
+      () => {
+        console.log(this.state.stage);
+        this.props.close();
+      }
+    );
+  };
 
+  render() {
+    const { mentor, open } = this.props;
+    const { submitted, calendarDate, stage, meeting } = this.state;
+    console.log(this.state.stage);
     return (
       open && (
         <Modal>
@@ -108,7 +106,7 @@ export default class CreateMeeting extends Component {
               <>
                 <Header>
                   <Heading>New Meeting</Heading>
-                  <Close onClick={close}>X</Close>
+                  <Close onClick={this.close}>X</Close>
                 </Header>
                 <Flash submitted={submitted} successMessage="Meeting Created!' 🎉" />
                 <SubHeading>
@@ -152,7 +150,7 @@ export default class CreateMeeting extends Component {
               <>
                 <Header>
                   <Heading>Meeting Payment</Heading>
-                  <Close onClick={close}>X</Close>
+                  <Close onClick={this.close}>X</Close>
                 </Header>
                 <Flash
                   submitted={submitted}
@@ -217,6 +215,7 @@ CreateMeeting.propTypes = {
   mentor: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
   close: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 const Modal = styled.div`
