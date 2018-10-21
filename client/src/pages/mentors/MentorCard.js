@@ -3,39 +3,28 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { transition, elevation } from 'utils/mixins';
 import { Link } from '@reach/router';
-import * as api from 'utils/api';
-import CreateMeeting from './CreateMeeting';
 
 export default class MentorCard extends Component {
-  state = { modalOpen: false };
-
-  openModal = () => {
-    this.setState({ modalOpen: true });
-  };
-
-  closeModal = () => {
-    this.setState({ modalOpen: false });
-  };
-
   render() {
     const { _id, name, rate, career, review, category, avatar } = this.props.mentor;
     return (
-      <>
-        <CreateMeeting open={this.state.modalOpen} mentor={this.props.mentor} close={this.closeModal} />
-        <MentorCardWrapper>
-          <Heading>{name}</Heading>
-          <Picture src={avatar} />
-          <Content>
-            {category && <p>Specialty: {category}</p>}
-            {career && <p>Career: {career}</p>}
-            {rate && <p>Rate Per Meeting: ${rate}</p>}
-            {review && <p>Rating: {review}</p>}
-          </Content>
-          <ViewProfile style={{ flex: 'unset', marginTop: '1rem', alignSelf: 'center' }} to={`/mentors/${_id}`}>
-            View Profile
-          </ViewProfile>
-        </MentorCardWrapper>
-      </>
+      <MentorCardWrapper>
+        <Heading>{name}</Heading>
+        <Picture src={avatar} />
+        <Content>
+          {review && <p>Rating: {review}</p>}
+          {rate && (
+            <p>
+              Price Per Meeting: <Rate>${rate}</Rate>
+            </p>
+          )}
+          {category && <p>Specialty: {category}</p>}
+          {career && <p>Career: {career}</p>}
+        </Content>
+        <ViewProfile style={{ flex: 'unset', marginTop: '1rem', alignSelf: 'center' }} to={`/mentors/${_id}`}>
+          View Profile
+        </ViewProfile>
+      </MentorCardWrapper>
     );
   }
 }
@@ -51,7 +40,7 @@ const MentorCardWrapper = styled.div`
   flex-direction: column;
   text-align: center;
   padding: 1.5rem;
-  margin: 0 2rem;
+  margin: 0 2rem 3rem;
   border-radius: 5px;
   width: 28rem;
   ${elevation({ level: 4 })};
@@ -83,6 +72,7 @@ const Picture = styled.img`
   object-position: center;
   border-radius: 20px;
   height: 18rem;
+  width: 22rem;
   align-self: center;
   margin-bottom: 1.5rem;
 `;
@@ -104,4 +94,8 @@ const ViewProfile = styled(Link)`
     transition: all 0.15s cubic-bezier(0.895, 0.03, 0.685, 0.22);
     cursor: pointer;
   }
+`;
+
+const Rate = styled.span`
+  color: ${props => props.theme.green};
 `;

@@ -7,7 +7,7 @@ import User from 'components/User';
 import Login from 'pages/Login';
 import Registration from 'pages/Registration';
 import Mentors from 'pages/mentors/Mentors';
-import Mentor from 'pages/Mentor';
+import Mentor from 'pages/mentor/Mentor';
 import Profile from 'pages/mentors/Profile';
 import Home from 'pages/Home';
 import './styles/App.css';

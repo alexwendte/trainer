@@ -53,40 +53,48 @@ export default class Mentors extends Component {
     return (
       <MentorsWrapper>
         <Heading>Let's Find You a Mentor!</Heading>
-        <InputGroup>
-          <SubHeading htmlFor="category">Filter by a Category</SubHeading>
-          <CategoryInput type="category" onChange={this.handleCategoryChange} id="category" placeholder="React.js" />
-        </InputGroup>
-        <Sort>
-          <SubHeading>Order By 👇</SubHeading>
-          <SortButtons>
-            <SortButton
-              className={currentSortStrategy === 'review' ? 'active' : ''}
-              onClick={() => this.sort({ type: 'review' })}
-            >
-              Rating
-            </SortButton>
-            <SortButton
-              className={currentSortStrategy === 'lowest' ? 'active' : ''}
-              onClick={() => this.sort({ type: 'lowest' })}
-            >
-              Lowest Per Meeting
-            </SortButton>
-            <SortButton
-              className={currentSortStrategy === 'highest' ? 'active' : ''}
-              onClick={() => this.sort({ type: 'highest' })}
-            >
-              Highest Per Meeting
-            </SortButton>
-          </SortButtons>
-        </Sort>
-        <SetUp>View A Mentors Profile</SetUp>
         {sortedMentors && (
-          <MentorsList>
-            {sortedMentors.map(mentor => (
-              <MentorCard key={mentor._id} mentor={mentor} />
-            ))}
-          </MentorsList>
+          <>
+            <InputGroup>
+              <SubHeading htmlFor="category">Filter by a Specialty</SubHeading>
+              <CategoryInput
+                type="category"
+                onChange={this.handleCategoryChange}
+                id="category"
+                placeholder="React.js"
+              />
+            </InputGroup>
+            <Sort>
+              <SubHeading>Order By 👇</SubHeading>
+              <SortButtons>
+                <SortButton
+                  className={currentSortStrategy === 'review' ? 'active' : ''}
+                  onClick={() => this.sort({ type: 'review' })}
+                >
+                  Rating
+                </SortButton>
+                <SortButton
+                  className={currentSortStrategy === 'lowest' ? 'active' : ''}
+                  onClick={() => this.sort({ type: 'lowest' })}
+                >
+                  Lowest Per Meeting
+                </SortButton>
+                <SortButton
+                  className={currentSortStrategy === 'highest' ? 'active' : ''}
+                  onClick={() => this.sort({ type: 'highest' })}
+                >
+                  Highest Per Meeting
+                </SortButton>
+              </SortButtons>
+            </Sort>
+            <SetUp>View A Mentors Profile</SetUp>
+
+            <MentorsList>
+              {sortedMentors.map(mentor => (
+                <MentorCard key={mentor._id} mentor={mentor} />
+              ))}
+            </MentorsList>
+          </>
         )}
       </MentorsWrapper>
     );
