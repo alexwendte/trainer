@@ -28,17 +28,21 @@ export default class Registration extends Component {
 
   handleSubmit = ev => {
     ev.preventDefault();
-    const { name, email, password, confirmPassword, isMentor } = ev.currentTarget.elements;
+    const { name, email, password, confirmPassword, isMentor, phoneNumber } = ev.currentTarget.elements;
     if (password.value !== confirmPassword.value) {
       this.setState({ error: 'Passwords do not match' });
       return;
     }
+
+    console.dir(phoneNumber);
+
     api.auth
       .register({
         name: name.value,
         email: email.value,
         password: password.value,
         isMentor: isMentor.value,
+        phoneNumber: phoneNumber.value,
       })
       .then(() => this.setState({ submitted: true }))
       .catch(err => {
@@ -59,11 +63,22 @@ export default class Registration extends Component {
           <StyledForm onSubmit={this.handleSubmit}>
             <InputGroup>
               <label htmlFor="name">Full Name</label>
-              <Input type="name" id="name" required />
+              <Input type="name" id="name" required placeholder="Mary Jane" />
             </InputGroup>
             <InputGroup>
               <label htmlFor="email">Email</label>
-              <Input type="email" id="email" required />
+              <Input type="email" id="email" required placeholder="hello@ksu.edu" />
+            </InputGroup>
+            <InputGroup>
+              <label htmlFor="phoneNumber">Phone Number</label>
+              <Input
+                type="tel"
+                id="phoneNumber"
+                name="phoneNumber"
+                required
+                placeholder="123-456-7890"
+                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+              />
             </InputGroup>
             <InputGroup>
               <label htmlFor="password">Password</label>
@@ -79,7 +94,7 @@ export default class Registration extends Component {
                 <RoleInputs>
                   <label htmlFor="isMentor">Student</label>
                   <input type="radio" name="isMentor" value={false} id="studentInput" defaultChecked />
-                  <label htmlFor="incomeInput">Mentor</label>
+                  <label htmlFor="mentorInput">Mentor</label>
                   <input type="radio" name="isMentor" value id="mentorInput" />
                 </RoleInputs>
               </fieldset>

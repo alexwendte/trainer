@@ -23,6 +23,10 @@ const UserSchema = new Schema({
   bio: String,
   rate: Number,
   category: String,
+  phoneNumber: {
+    type: String,
+    required: 'Phone Number is required',
+  },
 });
 
 // generate a hashed password

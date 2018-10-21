@@ -19,7 +19,7 @@ const Header = ({ user, logout }) => (
       </Link>
     </div>
     <UserBtnsContainer>
-      {user ? (
+      {user && user.name ? (
         <div>
           <Profile>
             <p>{user.name} &#9660;</p>

@@ -41,9 +41,10 @@ export default class Profile extends Component {
     const {
       name,
       email,
+      phoneNumber,
       currentPassword,
-      password,
-      confirmPassword,
+      // password,
+      // confirmPassword,
       bio,
       rate,
       career,
@@ -57,16 +58,16 @@ export default class Profile extends Component {
       return;
     }
 
-    if (password.value !== confirmPassword.value) {
+    /* if (password.value !== confirmPassword.value) {
       this.setState({ error: 'Passwords do not match' });
       return;
-    }
+    } */
 
-    if (password.value) {
+    /* if (password.value) {
       // TODO Different Route
       this.setState({ error: "Sorry, you can't change your password" });
 
-      /* 
+       
       api.users.update(_id, {
         career: career.value,
         bio: bio.value,
@@ -77,24 +78,25 @@ export default class Profile extends Component {
         password: password.value,
         // isMentor: isMentor.value,
       }); */
-    } else {
-      api.users
-        .update(_id, {
-          career: career.value,
-          bio: bio.value,
-          rate: rate && rate.value,
-          category: category && category.value,
-          email: email.value,
-          name: name.value,
-          // isMentor: isMentor.value,
-        })
-        .then(() => this.setState({ submitted: true }));
-    }
+    // } else {
+    api.users
+      .update(_id, {
+        career: career.value,
+        bio: bio.value,
+        rate: rate && rate.value,
+        category: category && category.value,
+        email: email.value,
+        phoneNumber: phoneNumber.value,
+        name: name.value,
+        // isMentor: isMentor.value,
+      })
+      .then(() => this.setState({ submitted: true }));
+    // }
   };
 
   render() {
     const { submitted, error, fullUser } = this.state;
-    const { name, email, career, category, rate, bio, isMentor } = fullUser;
+    const { name, email, career, category, rate, bio, isMentor, phoneNumber } = fullUser;
     return (
       <>
         <Flash submitted={submitted} error={error} fixed successMessage="Your Profile Was Modified ⚡" />
@@ -109,6 +111,17 @@ export default class Profile extends Component {
               <InputGroup>
                 <label htmlFor="email">Email</label>
                 <Input type="email" id="email" value={email} />
+              </InputGroup>
+              <InputGroup>
+                <label htmlFor="phoneNumber">Phone Number</label>
+                <Input
+                  type="tel"
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  required
+                  value={phoneNumber}
+                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                />
               </InputGroup>
               <InputGroup>
                 <label htmlFor="career">Career</label>
@@ -136,14 +149,14 @@ export default class Profile extends Component {
                 </label>
                 <Input type="password" id="currentPassword" required />
               </InputGroup>
-              <InputGroup>
+              {/* <InputGroup>
                 <label htmlFor="password">New Password</label>
                 <Input type="password" id="password" />
               </InputGroup>
               <InputGroup>
                 <label htmlFor="confirmPassword">Confirm Password</label>
                 <Input type="password" id="confirmPassword" />
-              </InputGroup>
+              </InputGroup> */}
               {/* <FieldSetWrapper>
                 <fieldset>
                   <legend>Select a User Role</legend>
@@ -224,7 +237,7 @@ const InputGroup = styled.div`
     height: 6rem;
   }
 `;
-
+/* 
 const FieldSetWrapper = styled.div`
   margin: 1rem 0 2rem;
   border-radius: 5px;
@@ -250,7 +263,7 @@ const FieldSetWrapper = styled.div`
 
 const RoleInputs = styled.div`
   padding-left: 1.5rem;
-`;
+`; */
 
 const Required = styled.span`
   color: ${props => props.theme.warning};
