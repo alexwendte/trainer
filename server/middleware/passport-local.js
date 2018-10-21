@@ -47,10 +47,11 @@ passport.use(
       passReqToCallback: true,
     },
     function(req, email, password, done) {
-      const { isMentor, name } = req.body;
+      const { isMentor, name, phoneNumber } = req.body;
       User.findOne({ email: email }, (err, user) => {
         // user with email exists
         if (user) {
+          console.error('Already has user');
           return done(null, false, 'A user with that email already exists');
         }
 
@@ -60,6 +61,7 @@ passport.use(
         new_user.password = new_user.generateHash(password);
         new_user.isMentor = isMentor;
         new_user.name = name;
+        new_user.phoneNumber = phoneNumber;
         new_user.save(err => {
           if (err) {
             console.log(err);

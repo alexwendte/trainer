@@ -34,7 +34,7 @@ const auth = {
       login({ token: 'logged in!' });
     }),
   register: form => requests.post('/users/signup', form),
-  verify: form => requests.post('/users/login', form).then(() => {}),
+  verify: form => requests.post('/users/login', form),
 };
 
 const users = {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Input from 'components/Input';
 import styled from 'styled-components';
 import * as api from 'utils/api';
-import Mentor from './Mentor';
+import MentorCard from './MentorCard';
 
 export default class Mentors extends Component {
   state = {
@@ -27,7 +27,7 @@ export default class Mentors extends Component {
         {mentors && (
           <MentorsList>
             {mentors.map(mentor => (
-              <Mentor key={mentor._id} mentor={mentor} />
+              <MentorCard key={mentor._id} mentor={mentor} />
             ))}
           </MentorsList>
         )}
