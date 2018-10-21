@@ -14,7 +14,6 @@ function validateObjectID(req, res, next) {
      * are valid MongoDB Object IDS
      */
     if(!isEmpty(req.params)) {
-        console.log('here');
         for(let param in req.params) {
             if(!ObjectID.isValid(req.params[param]))
             res.status(400).json({message: "You have entered an invalid ID"});
