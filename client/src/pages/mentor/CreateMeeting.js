@@ -14,6 +14,8 @@ export default class CreateMeeting extends Component {
   state = {
     calendarDate: moment(),
     submitted: false,
+    stage: 1,
+    meeting: {},
   };
 
   handleDateChange = ev => {
@@ -22,67 +24,151 @@ export default class CreateMeeting extends Component {
     });
   };
 
-  handleSubmit = ev => {
+  handleSubmit = ({ ev, stage }) => {
     ev.preventDefault();
-    const { title, agenda, initialMessage } = ev.currentTarget.elements;
-    const date = this.state.calendarDate;
-
-    api.meetings
-      .create({
+    if (stage === 1) {
+      const { title, agenda, initialMessage } = ev.currentTarget.elements;
+      const date = this.state.calendarDate;
+      const meeting = {
         title: title.value,
         agenda: agenda.value,
         initialMessage: initialMessage.value,
         meetingDate: date.toISOString(),
         mentorID: this.props.mentor._id,
-      })
-      .then(() => {
-        this.setState({ submitted: true });
-        setTimeout(() => {
-          this.setState({ submitted: false });
-          this.props.close();
-        }, 2500);
-      });
+      };
+
+      this.setState({ submitted: true });
+      setTimeout(() => {
+        this.setState({ submitted: false, meeting, stage: 2 });
+      }, 3000);
+    }
+    if (stage === 2) {
+      /* api.meetings
+        .create({
+          title: title.value,
+          agenda: agenda.value,
+          initialMessage: initialMessage.value,
+          meetingDate: date.toISOString(),
+          mentorID: this.props.mentor._id,
+        })
+        .then(() => {
+          this.setState({ submitted: true });
+          setTimeout(() => {
+            this.setState({ submitted: false });
+            this.props.close();
+          }, 2500);
+        }); */
+    }
   };
 
   render() {
     const { mentor, open, close } = this.props;
-    const { submitted, calendarDate } = this.state;
+    const { submitted, calendarDate, stage, meeting } = this.state;
 
     return (
       open && (
         <Modal>
           <ModalWrapper>
-            <Header>
-              <Heading>New Meeting</Heading>
-              <Close onClick={close}>X</Close>
-            </Header>
-            <Flash submitted={submitted} successMessage="You sent a meeting request! 🎉" />
-            <SubHeading>
-              Meeting with {mentor.name} <Cost>Cost: {mentor.rate || 'Free'}</Cost>
-            </SubHeading>
-            <Content>
-              <MyDatePicker>
-                <label htmlFor="date">Choose a meeting date and time</label>
-                <DatePicker selected={calendarDate} onChange={this.handleDateChange} showTimeSelect dateFormat="LLL" />
-              </MyDatePicker>
-              <Form onSubmit={this.handleSubmit}>
-                <InputGroup>
-                  <label htmlFor="title">Title</label>
-                  <Input type="title" id="title" required />
-                </InputGroup>
-                <InputGroup>
-                  <label htmlFor="agenda">Meeting Agenda</label>
-                  <TextArea type="agenda" id="agenda" />
-                </InputGroup>
-                <InputGroup>
-                  <label htmlFor="initialMessage">Message For Mentor</label>
-                  <TextArea type="initialMessage" id="initialMessage" />
-                </InputGroup>
-                <SubmitButton style={{ marginTop: '2rem' }} type="submit">
-                  Send Meeting Request
-                </SubmitButton>
-              </Form>
-            </Content>
+            {stage === 1 && (
+              <>
+                <Header>
+                  <Heading>New Meeting</Heading>
+                  <Close onClick={close}>X</Close>
+                </Header>
+                <Flash submitted={submitted} successMessage="Meeting Created!' 🎉" />
+                <SubHeading>
+                  Meeting with {mentor.name} <Cost>Cost: {`$${mentor.rate}` || 'Free'}</Cost>
+                </SubHeading>
+                <Content>
+                  <MyDatePicker>
+                    <label htmlFor="date">Choose a meeting date and time</label>
+                    <DatePicker
+                      selected={calendarDate}
+                      onChange={this.handleDateChange}
+                      showTimeSelect
+                      dateFormat="LLL"
+                    />
+                  </MyDatePicker>
+                  <Form
+                    onSubmit={ev => {
+                      this.handleSubmit({ ev, stage: 1 });
+                    }}
+                  >
+                    <InputGroup>
+                      <label htmlFor="title">Title</label>
+                      <Input type="text" id="title" required />
+                    </InputGroup>
+                    <InputGroup>
+                      <label htmlFor="agenda">Meeting Agenda</label>
+                      <TextArea id="agenda" />
+                    </InputGroup>
+                    <InputGroup>
+                      <label htmlFor="initialMessage">Message For Mentor</label>
+                      <TextArea id="initialMessage" />
+                    </InputGroup>
+                    <SubmitButton style={{ marginTop: '2rem' }} type="submit">
+                      Send Meeting Request
+                    </SubmitButton>
+                  </Form>
+                </Content>
+              </>
+            )}
+            {stage === 2 && (
+              <>
+                <Header>
+                  <Heading>Meeting Payment</Heading>
+                  <Close onClick={close}>X</Close>
+                </Header>
+                <Flash submitted={submitted} successMessage={`Your deposit was succesful, A meeting request was sent to ${mentor.name}! 🎉`} />
+                <SubHeading>
+                  Meeting with {mentor.name} <Cost>Cost: {`$${mentor.rate}` || 'Free'}</Cost>
+                </SubHeading>
+                {meeting.date}
+                <Content>
+                  <Form
+                    onSubmit={ev => {
+                      this.handleSubmit({ ev, stage: 2 });
+                    }}
+                  >
+                    <InputGroup>
+                      <label htmlFor="address">Address</label>
+                      <Input type="text" id="address" required />
+                    </InputGroup>
+                    <AddressInputs>
+                    <InputGroup>
+                      <label htmlFor="city">City</label>
+                      <Input type="text" id="city" required />
+                    </InputGroup>
+                    <InputGroup>
+                      <label htmlFor="zip">Zip</label>
+                      <Input type="text" id="zip" required />
+                    </InputGroup>
+                    <InputGroup>
+                      <label htmlFor="state">State</label>
+                      <Input type="text" id="state" required />
+                    </InputGroup>
+                    </AddressInputs>
+                    <InputGroup>
+                      <label htmlFor="cardNumber">Card Number</label>
+                      <Input type="text" id="cardNumber" required />
+                    </InputGroup>
+                    <CardInputs>
+                    <InputGroup>
+                      <label htmlFor="cardExpiration">Card Expiration</label>
+                      <Input type="text" id="cardExpiration" required />
+                    </InputGroup>
+                    <InputGroup>
+                      <label htmlFor="cardCode">Card Code</label>
+                      <Input type="text" id="cardCode" required />
+                    </InputGroup>
+                    </CardInputs>
+                    <SubmitButton style={{ marginTop: '2rem' }} type="submit">
+                      Make Deposit
+                    </SubmitButton>
+                  </Form>
+                </Content>
+              </>
+            )}
           </ModalWrapper>
         </Modal>
       )
@@ -185,6 +271,14 @@ const InputGroup = styled.div`
     border-radius: 5px;
   }
 `;
+
+const AddressInputs = styled.div  `
+  display: flex;
+`
+const CardInputs = styled.div  `
+  display: flex;
+`
+
 
 const MyDatePicker = styled.div`
   padding-top: 2rem;
