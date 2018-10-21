@@ -63,7 +63,7 @@ export default class Registration extends Component {
           <StyledForm onSubmit={this.handleSubmit}>
             <InputGroup>
               <label htmlFor="name">Full Name</label>
-              <Input type="name" id="name" required placeholder="Mary Jane" />
+              <Input type="text" id="name" required placeholder="Mary Jane" />
             </InputGroup>
             <InputGroup>
               <label htmlFor="email">Email</label>

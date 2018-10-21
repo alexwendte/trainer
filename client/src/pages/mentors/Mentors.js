@@ -58,7 +58,7 @@ export default class Mentors extends Component {
             <InputGroup>
               <SubHeading htmlFor="category">Filter by a Specialty</SubHeading>
               <CategoryInput
-                type="category"
+                type="text"
                 onChange={this.handleCategoryChange}
                 id="category"
                 placeholder="React.js"
