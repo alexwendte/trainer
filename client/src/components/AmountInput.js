@@ -57,7 +57,10 @@ export default class AmountInput extends React.Component {
     this.setState(state => {
       const noDollar = state.inputValue.replace('$', '');
       const formatted = `$${parseFloat(noDollar).toFixed(2)}`;
-      if (state.inputValue === '$' || state.inputValue === '') {
+      if (state.inputValue === '') {
+        return { inputValue: '', invalid: false };
+      }
+      if (state.inputValue === '$') {
         return { inputValue: '', invalid: true };
       }
       return { inputValue: formatted, invalid: false };

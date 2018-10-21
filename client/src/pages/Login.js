@@ -16,7 +16,7 @@ export default class Login extends Component {
     if (error) {
       setTimeout(() => {
         this.setState({ error: '' });
-      }, 2000);
+      }, 3000);
     }
   }
 
