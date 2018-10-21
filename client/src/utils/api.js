@@ -11,6 +11,7 @@ const requests = {
   get: url => api.get(url).then(getData),
   put: (url, body) => api.put(url, body).then(getData),
   post: (url, body) => api.post(url, body).then(getData),
+  patch: (url, body) => api.patch(url, body).then(getData),
 };
 
 const auth = {
@@ -33,12 +34,13 @@ const auth = {
       login({ token: 'logged in!' });
     }),
   register: form => requests.post('/users/signup', form),
+  verify: form => requests.post('/users/login', form).then(() => {}),
 };
 
 const users = {
   delete: id => requests.delete(`/users/${id}`),
-  get: id => requests.get(id ? `/users/${id}` : '/users'),
-  update: (id, updates) => requests.put(`/users/${id}`, updates),
+  get: id => requests.get(id ? `/users/profile/${id}` : '/users'),
+  update: (id, updates) => requests.patch(`/users/update/${id}`, updates),
   create: user => requests.post('/users', user),
 };
 

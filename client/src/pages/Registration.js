@@ -17,12 +17,12 @@ export default class Registration extends Component {
     if (submitted && !error) {
       setTimeout(() => {
         navigate('/');
-      }, 2000);
+      }, 3000);
     }
     if (error) {
       setTimeout(() => {
         this.setState({ submitted: false, error: '' });
-      }, 2000);
+      }, 3000);
     }
   }
 
@@ -84,7 +84,7 @@ export default class Registration extends Component {
                 </RoleInputs>
               </fieldset>
             </FieldSetWrapper>
-            <SubmitButton type="submit">Create</SubmitButton>
+            <SubmitButton type="submit">Sign Up 🎉</SubmitButton>
           </StyledForm>
         </RegisterWrapper>
       </>
