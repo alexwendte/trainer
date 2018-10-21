@@ -43,6 +43,41 @@ export default class CreateMeeting extends Component {
       }, 3000);
     }
     if (stage === 2) {
+      console.log(ev.currentTarget.elements);
+      const {
+        address,
+        city,
+        state,
+        zip,
+        cardNumber,
+        cardExpiration: dirtyExpiration,
+        cardCode,
+      } = ev.currentTarget.elements;
+      const dirty = dirtyExpiration.value;
+      const [month] = dirty.split('/');
+      const year = dirty.substr(dirty.length - 2);
+      const cardExpiration = `${month}${year}`;
+
+      api.meetings
+        .create({
+          meeting: this.state.meeting,
+          address: address.value,
+          city: city.value,
+          state: state.value,
+          zip: zip.value,
+          cardNumber: cardNumber.value,
+          cardExpiration,
+          cardCode: cardCode.value,
+        })
+        .then(() => {
+          this.setState({ submitted: true });
+          setTimeout(() => {
+            this.setState({ submitted: false });
+            this.props.close();
+          }, 2500);
+        })
+        .catch(err => console.error(err));
+
       /* api.meetings
         .create({
           title: title.value,
@@ -107,7 +142,7 @@ export default class CreateMeeting extends Component {
                       <TextArea id="initialMessage" />
                     </InputGroup>
                     <SubmitButton style={{ marginTop: '2rem' }} type="submit">
-                      Send Meeting Request
+                      Create Meeting
                     </SubmitButton>
                   </Form>
                 </Content>
@@ -119,7 +154,10 @@ export default class CreateMeeting extends Component {
                   <Heading>Meeting Payment</Heading>
                   <Close onClick={close}>X</Close>
                 </Header>
-                <Flash submitted={submitted} successMessage={`Your deposit was succesful, A meeting request was sent to ${mentor.name}! 🎉`} />
+                <Flash
+                  submitted={submitted}
+                  successMessage={`Your deposit was succesful, A meeting request was sent to ${mentor.name}! 🎉`}
+                />
                 <SubHeading>
                   Meeting with {mentor.name} <Cost>Cost: {`$${mentor.rate}` || 'Free'}</Cost>
                 </SubHeading>
@@ -132,35 +170,35 @@ export default class CreateMeeting extends Component {
                   >
                     <InputGroup>
                       <label htmlFor="address">Address</label>
-                      <Input type="text" id="address" required />
+                      <Input type="text" id="address" required placeholder="1223 Claflin Rd" />
                     </InputGroup>
                     <AddressInputs>
-                    <InputGroup>
-                      <label htmlFor="city">City</label>
-                      <Input type="text" id="city" required />
-                    </InputGroup>
-                    <InputGroup>
-                      <label htmlFor="zip">Zip</label>
-                      <Input type="text" id="zip" required />
-                    </InputGroup>
-                    <InputGroup>
-                      <label htmlFor="state">State</label>
-                      <Input type="text" id="state" required />
-                    </InputGroup>
+                      <InputGroup>
+                        <label htmlFor="city">City</label>
+                        <Input type="text" id="city" required placeholder="Manhattan" />
+                      </InputGroup>
+                      <InputGroup>
+                        <label htmlFor="state">State</label>
+                        <Input type="text" id="state" required placeholder="KS" />
+                      </InputGroup>
+                      <InputGroup>
+                        <label htmlFor="zip">Zip</label>
+                        <Input type="text" id="zip" required placeholder="66502" />
+                      </InputGroup>
                     </AddressInputs>
                     <InputGroup>
                       <label htmlFor="cardNumber">Card Number</label>
-                      <Input type="text" id="cardNumber" required />
+                      <Input type="text" id="cardNumber" required placeholder="1234-1234-1234-1234" />
                     </InputGroup>
                     <CardInputs>
-                    <InputGroup>
-                      <label htmlFor="cardExpiration">Card Expiration</label>
-                      <Input type="text" id="cardExpiration" required />
-                    </InputGroup>
-                    <InputGroup>
-                      <label htmlFor="cardCode">Card Code</label>
-                      <Input type="text" id="cardCode" required />
-                    </InputGroup>
+                      <InputGroup>
+                        <label htmlFor="cardExpiration">Card Expiration</label>
+                        <Input type="string" id="cardExpiration" required placeholder="08/20" />
+                      </InputGroup>
+                      <InputGroup>
+                        <label htmlFor="cardCode">Card Code</label>
+                        <Input type="text" id="cardCode" required placeholder="123" />
+                      </InputGroup>
                     </CardInputs>
                     <SubmitButton style={{ marginTop: '2rem' }} type="submit">
                       Make Deposit
@@ -272,13 +310,12 @@ const InputGroup = styled.div`
   }
 `;
 
-const AddressInputs = styled.div  `
+const AddressInputs = styled.div`
   display: flex;
-`
-const CardInputs = styled.div  `
+`;
+const CardInputs = styled.div`
   display: flex;
-`
-
+`;
 
 const MyDatePicker = styled.div`
   padding-top: 2rem;
