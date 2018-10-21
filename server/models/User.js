@@ -27,6 +27,7 @@ const UserSchema = new Schema({
     type: String,
     required: 'Phone Number is required',
   },
+  review: Number,
 });
 
 // generate a hashed password
