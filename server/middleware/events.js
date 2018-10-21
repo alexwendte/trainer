@@ -42,8 +42,6 @@ transactionsEvents.addListener('meetingRequested', function(meeting, req) {
     let { cardNumber, 
         cardExpiration,
         cardCode, 
-        firstName, 
-        lastName,
         address,
         city,
         state,
@@ -51,13 +49,14 @@ transactionsEvents.addListener('meetingRequested', function(meeting, req) {
         country,
         phoneNumber
     } = req
-    let creditCard = createCreditCard(cardNumber, cardExpiration, cardCode);
-    let customerAddress = createAddress(firstName, lastName, address, city, state, zip, country, phoneNumber);
-    Meeting.findById(meeting._id)
-    .populate('mentorID', '-password')
-    .populate('studentID', '-password').then((meeting, err) => {
+
+    Meeting.findById(meeting._id).populate('mentorID', 'name email career rate bio')
+    .populate('studentID', 'name email career bio').then((meeting, err) => {
+        let name = meeting.studentID.name.split(' ');
+        let creditCard = createCreditCard(cardNumber, cardExpiration, cardCode);
+        let customerAddress = createAddress(name[0], name[1], address, city, state, zip, country, phoneNumber);
         authorizeTransaction(creditCard, customerAddress, meeting);
-    })
+    });
 });
 
 module.exports = transactionsEvents;

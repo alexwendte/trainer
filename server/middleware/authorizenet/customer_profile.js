@@ -108,10 +108,14 @@ function createProfile(paymentProfile, user) {
 
 function authorizeTransaction(paymentType, address, meeting) {
   let merchant = initialize();
+  let lineItems = createLineItem(meeting);
+  let userFields = createUserFields(meeting);
   let transaction = new APIContracts.TransactionRequestType();
   transaction.setTransactionType(APIContracts.TransactionTypeEnum.AUTHONLYTRANSACTION);
   transaction.setPayment(paymentType);
-  transaction.setAmount(11.0);
+  transaction.setLineItems(lineItems);
+	transaction.setUserFields(userFields);
+  transaction.setAmount(meeting.mentorID.rate ? meeting.mentorID.rate : 15.00);
   transaction.setBillTo(address);
 
   var createRequest = new APIContracts.CreateTransactionRequest();
@@ -131,43 +135,73 @@ function authorizeTransaction(paymentType, address, meeting) {
   });
 }
 
-function createLineItem(meeting_id, mentor_rate) {
+function createLineItem(meeting) {
   var lineItem_id1 = new APIContracts.LineItemType();
-  lineItem_id1.setItemId(meeting_id);
-  lineItem_id1.setName('Meeting with a Mentor');
-  lineItem_id1.setDescription('Cost of per meeting with this mentor amounted to');
+  lineItem_id1.setItemId(meeting._id);
+  lineItem_id1.setName(`Meeting with a ${meeting.mentorID.name}`);
+  lineItem_id1.setDescription(`You have scheduled a meeting with ${meeting.mentorID.name}`);
   lineItem_id1.setQuantity('1');
-  lineItem_id1.setUnitPrice(mentor_rate);
+  lineItem_id1.setUnitPrice(meeting.mentorID.rate);
+
+  var lineItemList = [];
+	lineItemList.push(lineItem_id1);
+
+	var lineItems = new APIContracts.ArrayOfLineItem();
+  lineItems.setLineItem(lineItemList);
+  
+  return lineItems;
 }
 
-function chargePreviousTransaction(transaction_id, meeting, student) {
+function createUserFields(meeting) {
+  let student = meeting.studentID;
+  let mentor = meeting.mentorID;
+
+  var mentorField = new APIContracts.UserField();
+	mentorField.setName("Mentor Name");
+	mentorField.setValue(mentor.name);
+
+	var studentField = new APIContracts.UserField();
+	studentField.setName("Student Name");
+	studentField.setValue(student.name);
+
+	var userFieldList = [];
+	userFieldList.push(mentorField);
+	userFieldList.push(studentField);
+
+	var userFields = new APIContracts.TransactionRequestType.UserFields();
+  userFields.setUserField(userFieldList);
+  
+  return userFields;
+}
+function chargePreviousTransaction(transaction_id, meeting, student){
   var merchant = initialize();
-  var orderDetails = new APIContracts.OrderType();
-  orderDetails.setInvoiceNumber('INV-12345');
-  orderDetails.setDescription('Product Description');
+  console.log(meeting);
+	var orderDetails = new APIContracts.OrderType();
+	orderDetails.setInvoiceNumber('INV-12345');
+	orderDetails.setDescription('Product Description');
 
-  var transactionRequestType = new APIContracts.TransactionRequestType();
-  transactionRequestType.setTransactionType(APIContracts.TransactionTypeEnum.PRIORAUTHCAPTURETRANSACTION);
-  transactionRequestType.setRefTransId(transaction_id);
-  transactionRequestType.setOrder(orderDetails);
+	var transactionRequestType = new APIContracts.TransactionRequestType();
+	transactionRequestType.setTransactionType(APIContracts.TransactionTypeEnum.PRIORAUTHCAPTURETRANSACTION);
+	transactionRequestType.setRefTransId(transaction_id);
+	transactionRequestType.setOrder(orderDetails);
 
-  var createRequest = new APIContracts.CreateTransactionRequest();
-  createRequest.setMerchantAuthentication(merchant);
-  createRequest.setTransactionRequest(transactionRequestType);
+	var createRequest = new APIContracts.CreateTransactionRequest();
+	createRequest.setMerchantAuthentication(merchant);
+	createRequest.setTransactionRequest(transactionRequestType);
 
-  //pretty print request
-  console.log(JSON.stringify(createRequest.getJSON(), null, 2));
+	//pretty print request
+	console.log(JSON.stringify(createRequest.getJSON(), null, 2));
+		
+	var ctrl = new APIControllers.CreateTransactionController(createRequest.getJSON());
 
-  var ctrl = new APIControllers.CreateTransactionController(createRequest.getJSON());
+	ctrl.execute(function(){
+		var apiResponse = ctrl.getResponse();
+		
+		var response = new APIContracts.CreateTransactionResponse(apiResponse);
 
-  ctrl.execute(function() {
-    var apiResponse = ctrl.getResponse();
-
-    var response = new APIContracts.CreateTransactionResponse(apiResponse);
-
-    //pretty print response
-    console.log(JSON.stringify(response, null, 2));
-  });
+		//pretty print response
+        console.log(JSON.stringify(response, null, 2));
+    })
 }
 
 function getProfile(user_id) {

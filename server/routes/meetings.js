@@ -39,7 +39,7 @@ router.get('/mentorlist', isAuthenticated, (req, res, next) => {
 // CREATE A MEETING
 router.post('/create', isAuthenticated, (req, res, next) => {
   let studentID = req.user._id;
-  let { mentorID, meetingDate, agenda, initialMessage, title } = req.body.meeting;
+  let { mentorID, meetingDate, agenda, initialMessage, title } = req.body;
   let meeting = new Meeting({
     studentID,
     mentorID,
@@ -49,6 +49,7 @@ router.post('/create', isAuthenticated, (req, res, next) => {
     title,
   });
   meeting.save().then((meeting, err) => {
+    meeting.populate('mentorID', '-password').populate('studentID', '-password');
     if (err) return res.status(400).json({ message: 'An error has occured' });
     transactionsEvents.emit('meetingRequested', meeting, req.body);
     res.status(201).json({
