@@ -4,7 +4,7 @@ var User = require('../models/User');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  User.find({ isMentor: true }, '_id name career rate bio').then((mentors, err) => {
+  User.find({ isMentor: true }).then((mentors, err) => {
     if (err) {
       res.status(404).send({ message: 'Could not get any mentors' });
     }
