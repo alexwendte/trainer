@@ -67,7 +67,7 @@ router.patch('/meeting/:id', isAuthenticated, (req, res, next) => {
     var {title, agenda, meetingDate} = _.pick(req.body, ['title', 'agenda', 'meetingDate']); 
     if(!ObjectID.isValid(id)) return res.status(400).json({ message: 'That is an invalid meeting ID' });
 
-    Meeting.findByIdAndUpdate(id, {title, agenda, meetingDate})
+    Meeting.findByIdAndUpdate(id, {title, agenda, meetingDate}, { new: true })
     .populate('mentorID', 'name email career rate bio')
     .populate('studentID', 'name email career bio')
     .then((meeting, err) => {
