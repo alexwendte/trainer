@@ -51,11 +51,11 @@ router.get('/profile/:id', isAuthenticated, validateObjectID, (req, res, next) =
 
 router.patch('/update/:id', isAuthenticated, validateObjectID, (req, res, next) => {
   const { id } = req.params;
-  const { career, bio, rate, name, email, isMentor, category, phoneNumber } = req.body;
+  const { career, bio, rate, name, email, category, phoneNumber } = req.body;
 
   if (String(req.user._id) !== id)
     return res.status(403).json({ message: 'You do not have permission to edit this page' });
-  User.findByIdAndUpdate(id, { career, bio, rate, name, email, isMentor, category, phoneNumber }, { new: true }).then(
+  User.findByIdAndUpdate(id, { career, bio, rate, name, email, category, phoneNumber }, { new: true }).then(
     (user, err) => {
       if (err) res.status(400).json({ message: 'Your profile could not be updated' });
       res.status(200).json({ user, message: 'Your account has been updated' });

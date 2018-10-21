@@ -46,11 +46,12 @@ export default class Profile extends Component {
       // password,
       // confirmPassword,
       bio,
-      rate,
+      rate: dirtyRate,
       career,
       // isMentor,
       category,
     } = ev.currentTarget.elements;
+    const [junk, rate = 0] = dirtyRate && dirtyRate.value.split('$');
     try {
       await api.auth.verify({ email: this.state.fullUser.email, password: currentPassword.value });
     } catch (error) {
@@ -83,7 +84,7 @@ export default class Profile extends Component {
       .update(_id, {
         career: career.value,
         bio: bio.value,
-        rate: rate && rate.value,
+        rate,
         category: category && category.value,
         email: email.value,
         phoneNumber: phoneNumber.value,
@@ -130,7 +131,7 @@ export default class Profile extends Component {
               {isMentor && (
                 <>
                   <InputGroup>
-                    <label htmlFor="category">Category</label>
+                    <label htmlFor="category">Specialty</label>
                     <Input type="text" id="category" value={category} />
                   </InputGroup>
                   <InputGroup>
