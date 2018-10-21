@@ -40,7 +40,7 @@ export default class CreateMeeting extends Component {
         setTimeout(() => {
           this.setState({ submitted: false });
           this.props.close();
-        }, 1500);
+        }, 2500);
       });
   };
 
@@ -58,7 +58,7 @@ export default class CreateMeeting extends Component {
             </Header>
             <Flash submitted={submitted} successMessage="You sent a meeting request! 🎉" />
             <SubHeading>
-              Meeting with {mentor.name} <Cost>{mentor.rate || 'Free'}</Cost>
+              Meeting with {mentor.name} <Cost>Cost: {mentor.rate || 'Free'}</Cost>
             </SubHeading>
             <Content>
               <MyDatePicker>
@@ -105,6 +105,7 @@ const Modal = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 `;
 
 const ModalWrapper = styled.div`
@@ -136,7 +137,8 @@ const SubHeading = styled.h3`
 `;
 
 const Cost = styled.span`
-  color: ${props => props.theme.primary};
+  color: ${props => props.theme.green};
+  padding-left: 1rem;
 `;
 
 const Close = styled.button`

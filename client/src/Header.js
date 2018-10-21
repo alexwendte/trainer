@@ -8,14 +8,8 @@ const Header = ({ user, logout }) => (
   <HeaderContainer>
     <h2 className="heading">Trainer</h2>
     <div className="links">
-      <Link className="link" to="/">
-        Home
-      </Link>
       <Link className="link" to="/mentors">
         Mentors
-      </Link>
-      <Link className="link" to="/categories">
-        Categories
       </Link>
     </div>
     <UserBtnsContainer>

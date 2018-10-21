@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import * as api from 'utils/api';
 import styled from 'styled-components';
 import { SubmitButton } from 'styles/comp';
+import CreateMeeting from './CreateMeeting';
 
 export default class Mentor extends Component {
   static defaultProps = {
@@ -11,6 +12,7 @@ export default class Mentor extends Component {
 
   state = {
     mentor: {},
+    modalOpen: false,
   };
 
   async componentDidMount() {
@@ -18,56 +20,65 @@ export default class Mentor extends Component {
     this.setState({ mentor });
   }
 
+  openModal = () => {
+    this.setState({ modalOpen: true });
+  };
+
+  closeModal = () => {
+    this.setState({ modalOpen: false });
+  };
+
   render() {
-    console.log(this.props);
-    console.log(this.state.mentor);
     const { name, email, bio, avatar, rate, review, category, career } = this.state.mentor;
     return (
-      <PageWrapper>
-        <Hero>
-          <Left>
-            <PageHeading>{name}</PageHeading>
-            <OverallRating>Overall Rating: {review}</OverallRating>
-            <ProfilePicture src={avatar} />
-          </Left>
-          <Right>
-            <ScheduleMeeting>Schedule a Meeting!</ScheduleMeeting>
-            <RightWrapper>
-              <Rate>${rate}</Rate>
-              <Bio>{bio}</Bio>
-              <Info>
-                <InfoHeading>Area of Expertise:</InfoHeading>
-                <p>{category}</p>
-                <InfoHeading>Career:</InfoHeading>
-                <p> {career}</p>
-              </Info>
-            </RightWrapper>
-          </Right>
-        </Hero>
-        <Reviews>
-          <SubHeading>
-            {name}
-            's Reviews
-          </SubHeading>
-          <ReviewList>
-            <Review>
-              <Reviewer>Cathy Wendte</Reviewer>
-              <Rating> Rating: 10</Rating>
-              <Message>She was an unbelievable mentor!</Message>
-            </Review>
-            <Review>
-              <Reviewer>Caleb Setiawan</Reviewer>
-              <Rating> Rating: 10</Rating>
-              <Message>She spent so much time with me!</Message>
-            </Review>
-            <Review>
-              <Reviewer>Max Flint</Reviewer>
-              <Rating> Rating: 10</Rating>
-              <Message>I do not regret the money I spent at all!</Message>
-            </Review>
-          </ReviewList>
-        </Reviews>
-      </PageWrapper>
+      <>
+        <CreateMeeting open={this.state.modalOpen} mentor={this.state.mentor} close={this.closeModal} />
+        <PageWrapper>
+          <Hero>
+            <Left>
+              <PageHeading>{name}</PageHeading>
+              <OverallRating>Overall Rating: {review}</OverallRating>
+              <ProfilePicture src={avatar} />
+            </Left>
+            <Right>
+              <ScheduleMeeting onClick={this.openModal}>Schedule a Meeting!</ScheduleMeeting>
+              <RightWrapper>
+                <Rate>${rate}</Rate>
+                <Bio>{bio}</Bio>
+                <Info>
+                  <InfoHeading>Area of Expertise:</InfoHeading>
+                  <p>{category}</p>
+                  <InfoHeading>Career:</InfoHeading>
+                  <p> {career}</p>
+                </Info>
+              </RightWrapper>
+            </Right>
+          </Hero>
+          <Reviews>
+            <SubHeading>
+              {name}
+              's Reviews
+            </SubHeading>
+            <ReviewList>
+              <Review>
+                <Reviewer>Cathy Wendte</Reviewer>
+                <Rating> Rating: 10</Rating>
+                <Message>She was an unbelievable mentor!</Message>
+              </Review>
+              <Review>
+                <Reviewer>Caleb Setiawan</Reviewer>
+                <Rating> Rating: 10</Rating>
+                <Message>She spent so much time with me!</Message>
+              </Review>
+              <Review>
+                <Reviewer>Max Flint</Reviewer>
+                <Rating> Rating: 10</Rating>
+                <Message>I do not regret the money I spent at all!</Message>
+              </Review>
+            </ReviewList>
+          </Reviews>
+        </PageWrapper>
+      </>
     );
   }
 }

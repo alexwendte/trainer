@@ -7,9 +7,8 @@ import User from 'components/User';
 import Login from 'pages/Login';
 import Registration from 'pages/Registration';
 import Mentors from 'pages/mentors/Mentors';
-import Mentor from 'pages/Mentor';
+import Mentor from 'pages/mentor/Mentor';
 import Profile from 'pages/mentors/Profile';
-import Home from 'pages/Home';
 import './styles/App.css';
 
 const theme = {
@@ -39,9 +38,9 @@ class App extends Component {
                     <Header path="/*" user={user} logout={logout} />
                   </Router>
                   <Router>
-                    <Home path="/" />
                     <Login path="/login" login={login} />
                     <Registration path="/registration" />
+                    <Mentors path="/" />
                     <Mentors path="/mentors" />
                     <Mentor path="/mentors/:mentorId" user={user} />
                     <Profile path="/profile" user={user} />
