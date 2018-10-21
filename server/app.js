@@ -52,7 +52,7 @@ app.use(express.static(path.join(__dirname, '../client/build')));
 // Setup the express-session starge with a very secure secret key
 app.use(
   session({
-    secret: 'keyboard cat',
+    secret: process.env.SESSION_SECRET,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
     },
