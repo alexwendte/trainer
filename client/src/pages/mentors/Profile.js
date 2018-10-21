@@ -8,17 +8,23 @@ import Flash from 'components/Flash';
 import PropTypes from 'prop-types';
 import { navigate } from '@reach/router';
 import { SubmitButton } from 'styles/comp';
+import Meeting from './Meeting';
 
 export default class Profile extends Component {
   state = {
     error: null,
     submitted: false,
     fullUser: {},
+    meetings: null,
   };
 
   async componentDidMount() {
     const fullUser = await api.users.get(this.props.user._id);
-    this.setState({ fullUser });
+    let meetings = null;
+    if (fullUser.isMentor) {
+      meetings = await api.meetings.getMentorList();
+    }
+    this.setState({ fullUser, meetings });
   }
 
   componentDidUpdate() {
@@ -48,10 +54,12 @@ export default class Profile extends Component {
       bio,
       rate: dirtyRate,
       career,
+      avatar,
       // isMentor,
       category,
     } = ev.currentTarget.elements;
-    const [junk, rate = 0] = dirtyRate && dirtyRate.value.split('$');
+    const stringRate = dirtyRate && dirtyRate.value.toString();
+    const rate = stringRate.includes('$') ? stringRate.substr(1) : stringRate;
     try {
       await api.auth.verify({ email: this.state.fullUser.email, password: currentPassword.value });
     } catch (error) {
@@ -89,6 +97,7 @@ export default class Profile extends Component {
         email: email.value,
         phoneNumber: phoneNumber.value,
         name: name.value,
+        avatar: avatar.value,
         // isMentor: isMentor.value,
       })
       .then(() => this.setState({ submitted: true }));
@@ -96,8 +105,8 @@ export default class Profile extends Component {
   };
 
   render() {
-    const { submitted, error, fullUser } = this.state;
-    const { name, email, career, category, rate, bio, isMentor, phoneNumber } = fullUser;
+    const { submitted, error, fullUser, meetings } = this.state;
+    const { name, email, career, category, rate, bio, isMentor, phoneNumber, avatar } = fullUser;
     return (
       <>
         <Flash submitted={submitted} error={error} fixed successMessage="Your Profile Was Modified ⚡" />
@@ -128,6 +137,10 @@ export default class Profile extends Component {
                 <label htmlFor="career">Career</label>
                 <Input type="text" id="career" value={career} />
               </InputGroup>
+              <InputGroup>
+                <label htmlFor="avatar">Avatar</label>
+                <Input type="text" id="avatar" value={avatar} />
+              </InputGroup>
               {isMentor && (
                 <>
                   <InputGroup>
@@ -136,7 +149,7 @@ export default class Profile extends Component {
                   </InputGroup>
                   <InputGroup>
                     <label htmlFor="rate">Rate Per Meeting</label>
-                    <AmountInput type="text" id="rate" value={rate} />
+                    <AmountInput type="text" id="rate" value={rate ? `$${rate}` : ''} />
                   </InputGroup>
                 </>
               )}
@@ -185,6 +198,13 @@ export default class Profile extends Component {
                 Modify My Information 👉
               </SubmitButton>
             </StyledForm>
+          )}
+          {isMentor && (
+            <Meetings>
+              {meetings.map(meeting => (
+                <Meeting key={meeting._id} meeting={meeting} />
+              ))}
+            </Meetings>
           )}
         </RegisterWrapper>
       </>
@@ -270,3 +290,5 @@ const Required = styled.span`
   color: ${props => props.theme.warning};
   font-weight: bold;
 `;
+
+const Meetings = styled.div``;

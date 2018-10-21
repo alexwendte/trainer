@@ -21,6 +21,21 @@ router.get('/list', isAuthenticated, (req, res, next) => {
     });
 });
 
+router.get('/mentorlist', isAuthenticated, (req, res, next) => {
+  let query = { mentorID: req.user._id };
+
+  Meeting.find(query)
+    .populate('mentorID', 'name email career rate bio')
+    .populate('studentID', 'name email career bio')
+    .then((meetings, err) => {
+      if (err) {
+        return res.status(400).json({ message: 'An error has occured' });
+      }
+
+      res.status(200).json(meetings);
+    });
+});
+
 // CREATE A MEETING
 router.post('/create', isAuthenticated, (req, res, next) => {
   let studentID = req.user._id;
@@ -58,16 +73,16 @@ router.get('/meeting/:id', isAuthenticated, validateObjectID, (req, res, next) =
 
 // UPDATE A MEETING
 router.patch('/meeting/:id', validateObjectID, (req, res, next) => {
-    let id = req.params.id;
-    let {title, agenda, meetingDate, isAccepted} = req.body; 
+  let id = req.params.id;
+  let { title, agenda, meetingDate, isAccepted } = req.body;
 
-  Meeting.findByIdAndUpdate(id, { title, agenda, meetingDate, isAccepted}, { new: true })
+  Meeting.findByIdAndUpdate(id, { title, agenda, meetingDate, isAccepted }, { new: true })
     .populate('mentorID', 'name email career rate bio')
     .populate('studentID', 'name email career bio')
     .then((meeting, err) => {
       if (err) return res.status(400).json({ message: 'An unexpected error has occured' });
-      if(isAccepted) {
-          transactionsEvents.emit('meetingAccepted', meeting, req.body)
+      if (isAccepted) {
+        transactionsEvents.emit('meetingAccepted', meeting, req.body);
       }
       res.status(200).json({ meeting, message: 'Meeting updated successfully' });
     });
