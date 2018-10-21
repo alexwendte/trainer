@@ -7,7 +7,22 @@ import { SubmitButton } from 'styles/comp';
 export default class Meeting extends Component {
   state = {
     deleted: false,
+    student: null,
+    mentor: null,
   };
+
+  async componentDidMount() {
+    console.log(this.props.meeting);
+    const { studentID, mentorID } = this.props.meeting;
+    const studentPromise = api.users.get(studentID._id);
+    const mentorPromise = api.users.get(mentorID._id);
+
+    const [student, mentor] = await Promise.all([studentPromise, mentorPromise]);
+
+    console.log(student, mentor);
+
+    this.setState({ student, mentor });
+  }
 
   handleStatusChange = async ({ status }) => {
     await api.meetings.update(this.props.meeting._id, { isAccepted: status });
@@ -20,6 +35,7 @@ export default class Meeting extends Component {
 
   render() {
     const { meeting, isMentor } = this.props;
+    const { student, mentor } = this.state;
     console.log(meeting);
     const { deleted } = this.state;
     if (deleted) return null;
@@ -27,6 +43,14 @@ export default class Meeting extends Component {
       <MeetingWrapper>
         <p>{meeting.title}</p>
         <p>{new Date(meeting.meetingDate).toDateString()}</p>
+        {isMentor
+          && student && (
+            <div>
+              <p>{student.email}</p>
+              <p>{student.phoneNumber}</p>
+            </div>
+          )}
+
         {isMentor
           && !meeting.isAccepted && (
             <SubmitButton
@@ -47,6 +71,13 @@ export default class Meeting extends Component {
               Reject Meeting
             </SubmitButton>
           )}
+        {!isMentor
+          && mentor && (
+            <div>
+              <p>{mentor.email}</p>
+              <p>{mentor.phoneNumber}</p>
+            </div>
+          )}
         {!isMentor && (
           <SubmitButton
             onClick={() => {
@@ -66,10 +97,7 @@ Meeting.propTypes = {
 };
 
 const MeetingWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 2rem;
-  button {
-    flex: unset;
-  }
+  display: grid;
+  padding: 1.5rem
+  grid-template-columns: repeat(4, 1fr);
 `;

@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import * as api from 'utils/api';
 import Flash from 'components/Flash';
 import PropTypes from 'prop-types';
-import { navigate } from '@reach/router';
+import { navigate, Link } from '@reach/router';
 import { SubmitButton } from 'styles/comp';
 import Meeting from './Meeting';
 
@@ -198,14 +198,24 @@ export default class Profile extends Component {
             </StyledForm>
             <Meetings>
               <Heading>Meetings</Heading>
-              <Headers>
-                <span>Title</span>
-                <span className="date">Date</span>
-                <div />
-              </Headers>
-              {meetings.map(meeting => (
-                <Meeting key={meeting._id} meeting={meeting} isMentor={isMentor} />
-              ))}
+              {meetings.length < 1 ? (
+                <div>
+                  <SubHeading>No Meetings, Get One Started 😀</SubHeading>
+                  <MyLink to="/">GOGOGO</MyLink>
+                </div>
+              ) : (
+                <>
+                  <Headers>
+                    <span>Title</span>
+                    <span className="date">Date</span>
+                    <span className="contact">Contact Info</span>
+                    <div />
+                  </Headers>
+                  {meetings.map(meeting => (
+                    <Meeting key={meeting._id} meeting={meeting} isMentor={isMentor} />
+                  ))}
+                </>
+              )}
             </Meetings>
           </RegisterWrapper>
         )}
@@ -226,6 +236,12 @@ const Heading = styled.h1`
   color: ${props => props.theme.primary};
   text-align: center;
   padding-bottom: 2rem;
+`;
+
+const SubHeading = styled.h3`
+  color: ${props => props.theme.gray};
+  display: inline-block;
+  margin-right: 3rem;
 `;
 
 const StyledForm = styled.form`
@@ -259,6 +275,26 @@ const InputGroup = styled.div`
   textarea {
     height: 6rem;
   }
+`;
+
+const MyLink = styled(Link)`
+  border-radius: 5px;
+  color: ${props => props.theme.white};
+  background: ${props => props.theme.primary};
+  border: none;
+  padding: 1rem 1.5rem;
+  font-weight: 600;
+  font-size: 1.8rem;
+  transition: all 0.3s cubic-bezier(0.895, 0.03, 0.685, 0.22);
+  display: inline-block;
+  flex: 0;
+  align-self: center;
+  &:hover {
+    transform: translateY(-1px);
+    transition: all 0.15s cubic-bezier(0.895, 0.03, 0.685, 0.22);
+    cursor: pointer;
+  }
+  display: inline-block;
 `;
 /* 
 const FieldSetWrapper = styled.div`
@@ -295,19 +331,16 @@ const Required = styled.span`
 
 const Meetings = styled.div`
   padding-top: 6rem;
-  max-width: 60rem;
+  max-width: 80rem;
   margin: 0 auto;
+  padding-bottom: 3rem;
 `;
 
 const Headers = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   span {
     font-size: 2rem;
     font-weight: bold;
-  }
-  span.date {
-    padding-right: 17rem;
   }
 `;

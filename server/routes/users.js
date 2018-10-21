@@ -39,8 +39,8 @@ router.get('/logout', (req, res, next) => {
 router.get('/profile/:id', isAuthenticated, validateObjectID, (req, res, next) => {
   var id = req.params.id;
 
-  if (String(req.user._id) !== id)
-    return res.status(403).json({ message: 'You do not have permission to view this page' });
+  /* if (String(req.user._id) !== id)
+    return res.status(403).json({ message: 'You do not have permission to view this page' }); */
 
   User.findById(id, '-password').then((user, err) => {
     if (err) return res.status(400).json({ message: 'User could not be fetched' });
