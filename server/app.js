@@ -1,13 +1,13 @@
 const express = require('express');
 const path = require('path');
-const favicon = require('serve-favicon');
 const logger = require('morgan');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const session = require('express-session');
-const MongoDbStore = require('connect-mongodb-session')(session);
 const passport = require('passport');
+const MongoStore = require('connect-mongo')(session);
 require('dotenv').config();
 require('./middleware/passport_init')(passport);
 
@@ -21,9 +21,10 @@ const payments = require('./routes/payments');
 require('./database/mongoose');
 
 /******** Session Storage *******/
-const store = new MongoDbStore({
+
+/* const store = new MongoDbStore({
   uri: process.env.MONGO_SESSION_STORE,
-  databaseName: 'trainer_sessions',
+  databaseName: 'trainer',
   collection: 'Sessions',
 });
 
@@ -34,7 +35,7 @@ store.on('connected', function() {
 store.on('error', function(error) {
   assert.ifError(error);
   assert.ok(false);
-});
+}); */
 
 const app = express();
 app.use(helmet());
@@ -47,15 +48,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../client/build')));
 // Setup the express-session starge with a very secure secret key
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
-    },
-    store: store,
-    resave: true,
+    resave: false,
     saveUninitialized: true,
+    store: new MongoStore({ mongooseConnection: mongoose.connection }),
   })
 );
 app.use(passport.initialize());

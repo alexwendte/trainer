@@ -26,6 +26,7 @@ router.post(
 router.get('/current_user', (req, res, next) => {
   if (!req.user) {
     res.status(401).json({});
+    return;
   }
   const { _id, name, email } = req.user;
   res.status(200).json({ _id, email, name });

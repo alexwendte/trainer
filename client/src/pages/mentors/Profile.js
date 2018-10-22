@@ -56,8 +56,13 @@ export default class Profile extends Component {
       // isMentor,
       category,
     } = ev.currentTarget.elements;
-    const stringRate = dirtyRate && dirtyRate.value.toString();
-    const rate = stringRate.includes('$') ? stringRate.substr(1) : stringRate;
+
+    let rate;
+    if (dirtyRate) {
+      const stringRate = dirtyRate.value.toString();
+      rate = stringRate.includes('$') ? stringRate.substr(1) : stringRate;
+    }
+
     try {
       await api.auth.verify({ email: this.state.fullUser.email, password: currentPassword.value });
     } catch (error) {

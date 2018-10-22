@@ -37,8 +37,6 @@ export default class CreateMeeting extends Component {
         mentorID: this.props.mentor._id,
       };
 
-      console.log(meeting);
-
       this.setState({ submitted: true });
       setTimeout(() => {
         this.setState({ submitted: false, meeting, stage: 2 });
