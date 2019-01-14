@@ -1,8 +1,9 @@
-import React from 'react';
+import { RouteComponentProps } from '@reach/router';
+import * as React from 'react';
 import styled from 'styled-components';
-import colors from 'utils/colors';
+import colors from './utils/colors';
 
-const Footer = () => (
+const Footer: React.FC<RouteComponentProps> = () => (
   <FooterContainer>
     <h3 className="heading">Created by Victor Valdez and Alex Wendte</h3>
   </FooterContainer>

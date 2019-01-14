@@ -1,10 +1,14 @@
-import React from 'react';
+import { Link, RouteComponentProps } from '@reach/router';
+import * as React from 'react';
 import styled from 'styled-components';
-import colors from 'utils/colors';
-import PropTypes from 'prop-types';
-import { Link } from '@reach/router';
+import { IUser } from './types';
+import colors from './utils/colors';
 
-const Header = ({ user, logout }) => (
+interface IProps extends RouteComponentProps {
+  user: IUser;
+  logout: any;
+}
+const Header: React.FC<IProps> = ({ user: propsUser, logout: propsLogout }) => (
   <HeaderContainer>
     <h2 className="heading">Trainer</h2>
     <div className="links">
@@ -13,15 +17,15 @@ const Header = ({ user, logout }) => (
       </Link>
     </div>
     <UserBtnsContainer>
-      {user && user.name ? (
+      {propsUser && propsUser.name ? (
         <div>
           <Profile>
-            <p>{user.name} &#9660;</p>
+            <p>{propsUser.name} &#9660;</p>
             <Link className="view-profile" to="/profile">
               View Profile
             </Link>
           </Profile>
-          <UserBtn onClick={logout} to="/">
+          <UserBtn onClick={propsLogout} to="/">
             Logout
           </UserBtn>
         </div>
@@ -35,15 +39,6 @@ const Header = ({ user, logout }) => (
   </HeaderContainer>
 );
 export default Header;
-
-Header.propTypes = {
-  user: PropTypes.object,
-  logout: PropTypes.func.isRequired,
-};
-
-Header.defaultProps = {
-  user: null,
-};
 
 const HeaderContainer = styled.div`
   background: ${props => props.theme.primary};

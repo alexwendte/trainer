@@ -1,47 +1,38 @@
-import React, { Component } from 'react';
-import Input from 'components/Input';
-import AmountInput from 'components/AmountInput';
-import TextArea from 'components/TextArea';
+import { Link, navigate } from '@reach/router';
+import * as React from 'react';
 import styled from 'styled-components';
-import * as api from 'utils/api';
-import Flash from 'components/Flash';
-import PropTypes from 'prop-types';
-import { navigate, Link } from '@reach/router';
-import { SubmitButton } from 'styles/comp';
+
+import { SubmitButton } from '../../styles/comp';
+import * as api from '../../utils/api';
+import TextArea from '../../components/TextArea';
+import AmountInput from '../../components/AmountInput';
+import FlashContext from '../../contexts/FlashContext';
+import Input from '../../components/Input';
 import Meeting from './Meeting';
+import {IUser, IForm, IMentor, IMeeting} from '../../types'
 
-export default class Profile extends Component {
-  state = {
-    error: null,
-    submitted: false,
-    fullUser: {},
-    meetings: null,
-  };
+interface IProps {
+  user: IUser
+}
 
-  async componentDidMount() {
-    const userPromise = api.users.get(this.props.user._id);
+const Profile: React.FC<IProps> = ({user}) =>  {
+  const [fullUser, setFullUser] = React.useState<IMentor | undefined>(undefined)
+  const [meetings, setMeetings] = React.useState<IMeeting[]>([])
+
+  const flashContext = React.useContext(FlashContext)
+
+React.useEffect(() => {
+  (async () => {
+    const userPromise = api.users.get(user._id);
     const meetingsPromise = api.meetings.get();
     const [fullUser, meetings] = await Promise.all([userPromise, meetingsPromise]);
-    this.setState({ fullUser, meetings });
-  }
+    setFullUser(fullUser)
+    setMeetings(meetings)
+  })()
+})
 
-  componentDidUpdate() {
-    const { submitted, error } = this.state;
-    if (submitted && !error) {
-      setTimeout(() => {
-        navigate('/');
-      }, 3000);
-    }
-    if (error) {
-      setTimeout(() => {
-        this.setState({ submitted: false, error: '' });
-      }, 3000);
-    }
-  }
-
-  handleSubmit = async ev => {
+ const handleSubmit = async (ev: React.FormEvent<HTMLFormElement> & IForm) => {
     ev.preventDefault();
-    const { _id } = this.props.user;
     const {
       name,
       email,
@@ -64,35 +55,14 @@ export default class Profile extends Component {
     }
 
     try {
-      await api.auth.verify({ email: this.state.fullUser.email, password: currentPassword.value });
+      await api.auth.verify({ email: fullUser ? fullUser.email : '', password: currentPassword.value });
     } catch (error) {
-      this.setState({ error: 'The current password you entered is incorrect' });
+      flashContext.set({message: 'The current password you entered is incorrect', isError: true})
       return;
     }
 
-    /* if (password.value !== confirmPassword.value) {
-      this.setState({ error: 'Passwords do not match' });
-      return;
-    } */
-
-    /* if (password.value) {
-      // TODO Different Route
-      this.setState({ error: "Sorry, you can't change your password" });
-
-       
-      api.users.update(_id, {
-        career: career.value,
-        bio: bio.value,
-        rate: rate && rate.value,
-        category: category && category.value,
-        email: email.value,
-        name: name.value,
-        password: password.value,
-        // isMentor: isMentor.value,
-      }); */
-    // } else {
     api.users
-      .update(_id, {
+      .update(user._id, {
         career: career.value,
         bio: bio.value,
         rate,
@@ -101,22 +71,19 @@ export default class Profile extends Component {
         phoneNumber: phoneNumber.value,
         name: name.value,
         avatar: avatar.value,
-        // isMentor: isMentor.value,
       })
-      .then(() => this.setState({ submitted: true }));
-    // }
+      .then(() => {
+        flashContext.set({message: 'Your Profile Was Modified ⚡'})
+      navigate('/')
+    });
   };
 
-  render() {
-    const { submitted, error, fullUser, meetings } = this.state;
-    const { name, email, career, category, rate, bio, isMentor, phoneNumber, avatar } = fullUser;
-    return (
-      <>
-        <Flash submitted={submitted} error={error} fixed successMessage="Your Profile Was Modified ⚡" />
-        {fullUser.name && (
+    if(fullUser) {
+      const { name, email, career, category, rate, bio, isMentor, phoneNumber, avatar } = fullUser;
+      return (
           <RegisterWrapper>
             <Heading>Modify Your Profile</Heading>
-            <StyledForm onSubmit={this.handleSubmit}>
+            <StyledForm onSubmit={handleSubmit}>
               <InputGroup>
                 <label htmlFor="name">Full Name</label>
                 <Input type="name" id="name" value={name} />
@@ -131,7 +98,7 @@ export default class Profile extends Component {
                   type="tel"
                   id="phoneNumber"
                   name="phoneNumber"
-                  required
+                  required={true}
                   value={phoneNumber}
                   pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                 />
@@ -164,7 +131,7 @@ export default class Profile extends Component {
                 <label htmlFor="currentPassword">
                   Current Password <Required>Required</Required>
                 </label>
-                <Input type="password" id="currentPassword" required />
+                <Input type="password" id="currentPassword" required={true} />
               </InputGroup>
               {/* <InputGroup>
                 <label htmlFor="password">New Password</label>
@@ -183,7 +150,7 @@ export default class Profile extends Component {
                       type="radio"
                       name="isMentor"
                       checked={!isMentor}
-                      onChange={this.handleRoleChange}
+                      onChange={handleRoleChange}
                       id="studentInput"
                     />
                     <label htmlFor="incomeInput">Mentor</label>
@@ -191,7 +158,7 @@ export default class Profile extends Component {
                       type="radio"
                       name="isMentor"
                       checked={isMentor}
-                      onChange={this.handleRoleChange}
+                      onChange={handleRoleChange}
                       id="mentorInput"
                     />
                   </RoleInputs>
@@ -224,14 +191,10 @@ export default class Profile extends Component {
             </Meetings>
           </RegisterWrapper>
         )}
-      </>
-    );
+    return null
   }
-}
 
-Profile.propTypes = {
-  user: PropTypes.object.isRequired,
-};
+export default Profile
 
 const RegisterWrapper = styled.div`
   padding: 2rem;

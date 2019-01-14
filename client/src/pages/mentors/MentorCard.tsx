@@ -1,12 +1,16 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
-import { transition, elevation } from 'utils/mixins';
 import { Link } from '@reach/router';
+import * as React from 'react';
+import styled from 'styled-components';
 
-export default class MentorCard extends Component {
-  render() {
-    const { _id, name, rate, career, review, category, avatar } = this.props.mentor;
+import { elevation, transition } from '../../utils/mixins';
+import {IMentor} from '../../types'
+
+interface IProps {
+  mentor: IMentor
+}
+
+const MentorCard: React.FC<IProps> = ({mentor}) => {
+  const { _id, name, rate, career, review, category, avatar } = mentor
     return (
       <MentorCardWrapper>
         <Heading>{name}</Heading>
@@ -26,11 +30,9 @@ export default class MentorCard extends Component {
         </ViewProfile>
       </MentorCardWrapper>
     );
-  }
 }
-MentorCard.propTypes = {
-  mentor: PropTypes.object.isRequired,
-};
+
+export default MentorCard
 
 const MentorCardWrapper = styled.div`
   overflow: hidden;
@@ -43,7 +45,7 @@ const MentorCardWrapper = styled.div`
   margin: 0 2rem 3rem;
   border-radius: 5px;
   width: 28rem;
-  ${elevation({ level: 4 })};
+  ${elevation(4)};
   ${transition({ name: 'easeOutCubic', prop: 'all', time: 0.3 })};
 
   &:hover {

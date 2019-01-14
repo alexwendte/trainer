@@ -1,42 +1,35 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import * as api from 'utils/api';
+import * as React from 'react';
 import styled from 'styled-components';
-import { SubmitButton } from 'styles/comp';
+
+import { SubmitButton } from '../../styles/comp';
+import * as api from '../../utils/api';
 import CreateMeeting from './CreateMeeting';
+import {IUser, IMentor} from '../../types'
 
-export default class Mentor extends Component {
-  static defaultProps = {
-    mentorId: null,
-  };
+interface IProps {
+  mentorId?: string
+  user: IUser
+}
 
-  state = {
-    mentor: {},
-    modalOpen: false,
-  };
+const Mentor: React.FC<IProps> = ({mentorId = undefined}, user) => {
+  const [mentor, setMentor] = React.useState<IMentor | undefined>(undefined)
+  const [modalOpen, setModalOpen] = React.useState(false)
+  
+  React.useEffect(()=> {
+    (async () => {
+      setMentor(await api.mentors.get(mentorId))
+    })
+  })
 
-  async componentDidMount() {
-    const mentor = await api.mentors.get(this.props.mentorId);
-    this.setState({ mentor });
-  }
-
-  openModal = () => {
-    this.setState({ modalOpen: true });
-  };
-
-  closeModal = () => {
-    this.setState({ modalOpen: false });
-  };
-
-  render() {
-    const { name, email, bio, avatar, rate, review, category, career } = this.state.mentor;
+  if(mentor) {
+    const { name, bio, avatar, rate, review, category, career } = mentor;
     return (
       <>
         <CreateMeeting
-          open={this.state.modalOpen}
-          mentor={this.state.mentor}
-          user={this.props.user}
-          close={this.closeModal}
+          open={modalOpen}
+          mentor={mentor}
+          user={user}
+          close={() => setModalOpen(false)}
         />
         <PageWrapper>
           {name && (
@@ -48,7 +41,7 @@ export default class Mentor extends Component {
                   <ProfilePicture src={avatar} />
                 </Left>
                 <Right>
-                  <ScheduleMeeting onClick={this.openModal}>Schedule a Meeting!</ScheduleMeeting>
+                  <ScheduleMeeting onClick={() => setModalOpen(true)}>Schedule a Meeting!</ScheduleMeeting>
                   <RightWrapper>
                     <Rate>${rate}</Rate>
                     <Bio>{bio}</Bio>
@@ -83,18 +76,18 @@ export default class Mentor extends Component {
                     <Message>I do not regret the money I spent at all!</Message>
                   </Review>
                 </ReviewList>
-              </Reviews>{' '}
+              </Reviews>
             </>
           )}
         </PageWrapper>
       </>
     );
   }
+
+return null
 }
-Mentor.propTypes = {
-  user: PropTypes.object.isRequired,
-  mentorId: PropTypes.string,
-};
+
+export default Mentor
 
 const PageWrapper = styled.div`
   max-width: 110rem;

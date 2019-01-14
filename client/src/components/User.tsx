@@ -1,39 +1,52 @@
-import { Component } from 'react';
-import PropTypes from 'prop-types';
 import { navigate } from '@reach/router';
+import * as React from 'react';
+
+import { IUser } from '../types';
 import * as api from '../utils/api';
 
-export default class User extends Component {
-  resetState = { user: null, error: null, pending: false, loggedIn: false };
+interface IProps {
+  children: (nodes: any) => React.ReactNode;
+}
+
+interface IState {
+  user?: IUser;
+  error?: string;
+  loggedIn: boolean;
+  pending: boolean;
+}
+
+export default class User extends React.Component<IProps, IState> {
+  resetState = { user: undefined, error: undefined, pending: false, loggedIn: false };
 
   state = { ...this.resetState, pending: true };
 
   componentDidMount() {
     return api.auth
       .me()
-      .then(user => this.reset({ user }))
-      .catch(error => {
+      .then((user: IUser) => this.reset({ user }))
+      .catch((error: any) => {
         console.error({ error });
         Promise.reject(this.reset({ error }));
       });
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: any, prevState: any) {
     if (!prevState.loggedIn && this.state.loggedIn) {
       return api.auth
         .me()
-        .then(user => {
+        .then((user: IUser) => {
           navigate('/');
           this.reset({ user });
         })
-        .catch(error => {
+        .catch((error: any) => {
           console.error({ error });
           Promise.reject(this.reset({ error }));
         });
     }
   }
 
-  login = (...args) => api.auth.login(...args).then(() => {
+  login = (...args: any) =>
+    api.auth.login(...args).then(() => {
       this.reset({ pending: true, loggedIn: true });
     });
 
@@ -42,14 +55,17 @@ export default class User extends Component {
     return api.auth.logout().then(() => this.reset(), ({ error }) => Promise.reject(this.reset({ error })));
   };
 
-  register = (...args) => {
+  register = (...args: any) => {
     this.reset({ pending: true });
     return api.auth
       .register(...args)
-      .then(({ user }) => this.reset({ user }), ({ error }) => Promise.reject(this.reset({ error })));
+      .then(
+        ({ user }: { user: IUser }) => this.reset({ user }),
+        ({ error }: { error: any }) => Promise.reject(this.reset({ error }))
+      );
   };
 
-  reset(overrides) {
+  reset(overrides?: any) {
     const newState = { ...this.resetState, ...overrides };
     this.setState(newState);
     return newState;
@@ -65,7 +81,3 @@ export default class User extends Component {
     });
   }
 }
-
-User.propTypes = {
-  children: PropTypes.func.isRequired,
-};

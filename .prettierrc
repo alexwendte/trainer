@@ -4,5 +4,6 @@
   "printWidth": 120,
   "arrowParens": "avoid",
   "semi": true,
-  "jsxBracketSameLine": false
+  "jsxBracketSameLine": false,
+  "editor.formatOnSave": true
 }

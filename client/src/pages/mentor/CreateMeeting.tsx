@@ -1,46 +1,49 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import moment, {Moment} from 'moment';
+import * as React from 'react';
 import DatePicker from 'react-datepicker';
-import moment from 'moment';
-import Input from 'components/Input';
-import TextArea from 'components/TextArea';
-import Flash from 'components/Flash';
-import { SubmitButton } from 'styles/comp';
 import 'react-datepicker/dist/react-datepicker.css';
-import * as api from 'utils/api';
+import styled from 'styled-components';
 
-export default class CreateMeeting extends Component {
-  state = {
-    calendarDate: moment(),
-    submitted: false,
-    stage: 1,
-    meeting: {},
+import Input from '../../components/Input';
+import TextArea from '../../components/TextArea';
+import FlashContext from '../../contexts/FlashContext';
+import { SubmitButton } from '../../styles/comp';
+import * as api from '../../utils/api';
+import { IForm, IMeeting, IMentor, IUser } from '../../types';
+
+interface IProps {
+  open: boolean
+  mentor: IMentor
+  user: IUser
+  close: () => void  
+}
+
+const CreateMeeting: React.FC<IProps> = ({open,  mentor,  user,  close}) => {
+  const [calendarDate, setCalendarDate] = React.useState<Moment>(moment());
+  const [stage, setStage] = React.useState(1);
+  const [meeting, setMeeting] = React.useState<Partial<IMeeting> | undefined>(undefined)
+
+const flashContext = React.useContext(FlashContext)    
+  
+  const handleDateChange = (ev: React.ChangeEvent<Moment>) => {
+    setCalendarDate(ev.currentTarget);
   };
 
-  handleDateChange = ev => {
-    this.setState({
-      calendarDate: ev,
-    });
-  };
-
-  handleSubmit = ({ ev, stage }) => {
+  const handleSubmit = ({ ev, stage }: {ev: React.FormEvent<HTMLFormElement> & IForm, stage: number} ) => {
     ev.preventDefault();
     if (stage === 1) {
       const { title, agenda, initialMessage } = ev.currentTarget.elements;
-      const date = this.state.calendarDate;
-      const meeting = {
-        title: title.value,
+      const date = calendarDate;
+      const createdMeeting = {
         agenda: agenda.value,
         initialMessage: initialMessage.value,
         meetingDate: date.toISOString(),
-        mentorID: this.props.mentor._id,
+        mentorID: mentor._id,
+        title: title.value,
       };
-
-      this.setState({ submitted: true });
-      setTimeout(() => {
-        this.setState({ submitted: false, meeting, stage: 2 });
-      }, 3000);
+    flashContext.set({message: `Your deposit was succesful, A meeting request was sent to ${mentor.name}! 🎉`})
+    setStage(2)
+    setMeeting(createdMeeting)
     }
     if (stage === 2) {
       const {
@@ -57,58 +60,45 @@ export default class CreateMeeting extends Component {
       const year = dirty.substr(dirty.length - 2);
       const cardExpiration = `${month}${year}`;
 
-      const [firstName, lastName] = this.props.user.name.split(' ');
+      const [firstName, lastName] = user.name.split(' ');
 
       const cardNumber = cardNumberDirty.value.split('-').join('');
 
       api.meetings
         .create({
-          meeting: this.state.meeting,
           address: address.value,
-          city: city.value,
-          state: state.value,
-          zip: zip.value,
-          cardNumber,
-          cardExpiration,
           cardCode: cardCode.value,
+          cardExpiration,
+          cardNumber,
+          city: city.value,
           firstName,
           lastName,
+          meeting,
+          state: state.value,
+          zip: zip.value,
         })
         .then(() => {
-          this.setState({ submitted: true });
-          setTimeout(() => {
-            this.setState({ submitted: false, stage: 1 });
-            this.props.close();
-          }, 2500);
+          flashContext.set({message: "Meeting Created! 🎉"})
+          setStage(1)
         });
     }
   };
 
-  close = () => {
-    this.setState(
-      () => ({ stage: 1 }),
-      () => {
-        console.log(this.state.stage);
-        this.props.close();
-      }
-    );
+  const closeModal = () => {
+    setStage(1)
+    close()
   };
 
-  render() {
-    const { mentor, open } = this.props;
-    const { submitted, calendarDate, stage, meeting } = this.state;
-    console.log(this.state.stage);
     return (
-      open && (
+      open ? (
         <Modal>
           <ModalWrapper>
             {stage === 1 && (
               <>
                 <Header>
                   <Heading>New Meeting</Heading>
-                  <Close onClick={this.close}>X</Close>
+                  <Close onClick={() => closeModal}>X</Close>
                 </Header>
-                <Flash submitted={submitted} successMessage="Meeting Created! 🎉" />
                 <SubHeading>
                   Meeting with {mentor.name} <Cost>Cost: {`$${mentor.rate}` || 'Free'}</Cost>
                 </SubHeading>
@@ -116,21 +106,21 @@ export default class CreateMeeting extends Component {
                   <MyDatePicker>
                     <label htmlFor="date">Choose a meeting date and time</label>
                     <DatePicker
-                      selected={calendarDate}
-                      onChange={this.handleDateChange}
-                      showTimeSelect
+                      selected={calendarDate.toDate()}
+                      onChange={() => handleDateChange}
+                      showTimeSelect={true}
                       dateFormat="LLL"
-                      required
+                      required={true}
                     />
                   </MyDatePicker>
                   <Form
-                    onSubmit={ev => {
-                      this.handleSubmit({ ev, stage: 1 });
+                    onSubmit={(ev: any) => {
+                      handleSubmit({ ev, stage: 1 });
                     }}
                   >
                     <InputGroup>
                       <label htmlFor="title">Title</label>
-                      <Input type="text" id="title" required />
+                      <Input type="text" id="title" required={true} />
                     </InputGroup>
                     <InputGroup>
                       <label htmlFor="agenda">Meeting Agenda</label>
@@ -151,52 +141,48 @@ export default class CreateMeeting extends Component {
               <>
                 <Header>
                   <Heading>Meeting Payment</Heading>
-                  <Close onClick={this.close}>X</Close>
+                  <Close onClick={() => closeModal}>X</Close>
                 </Header>
-                <Flash
-                  submitted={submitted}
-                  successMessage={`Your deposit was succesful, A meeting request was sent to ${mentor.name}! 🎉`}
-                />
                 <SubHeading>
                   Meeting with {mentor.name} <Cost>Cost: {`$${mentor.rate}` || 'Free'}</Cost>
                 </SubHeading>
-                {meeting.date}
+                {meeting && meeting.meetingDate}
                 <Content>
                   <Form
-                    onSubmit={ev => {
-                      this.handleSubmit({ ev, stage: 2 });
+                    onSubmit={(ev: any) => {
+                      handleSubmit({ ev, stage: 2 });
                     }}
                   >
                     <InputGroup>
                       <label htmlFor="address">Address</label>
-                      <Input type="text" id="address" required placeholder="1223 Claflin Rd" />
+                      <Input type="text" id="address" required={true} placeholder="1223 Claflin Rd" />
                     </InputGroup>
                     <AddressInputs>
                       <InputGroup>
                         <label htmlFor="city">City</label>
-                        <Input type="text" id="city" required placeholder="Manhattan" />
+                        <Input type="text" id="city" required={true} placeholder="Manhattan" />
                       </InputGroup>
                       <InputGroup>
                         <label htmlFor="state">State</label>
-                        <Input type="text" id="state" required placeholder="KS" />
+                        <Input type="text" id="state" required={true} placeholder="KS" />
                       </InputGroup>
                       <InputGroup>
                         <label htmlFor="zip">Zip</label>
-                        <Input type="text" id="zip" required placeholder="66502" />
+                        <Input type="text" id="zip" required={true} placeholder="66502" />
                       </InputGroup>
                     </AddressInputs>
                     <InputGroup>
                       <label htmlFor="cardNumber">Card Number</label>
-                      <Input type="text" id="cardNumber" required placeholder="1234-1234-1234-1234" />
+                      <Input type="text" id="cardNumber" required={true} placeholder="1234-1234-1234-1234" />
                     </InputGroup>
                     <CardInputs>
                       <InputGroup>
                         <label htmlFor="cardExpiration">Card Expiration</label>
-                        <Input type="string" id="cardExpiration" required placeholder="08/20" />
+                        <Input type="string" id="cardExpiration" required={true} placeholder="08/20" />
                       </InputGroup>
                       <InputGroup>
                         <label htmlFor="cardCode">Card Code</label>
-                        <Input type="text" id="cardCode" required placeholder="123" />
+                        <Input type="text" id="cardCode" required={true} placeholder="123" />
                       </InputGroup>
                     </CardInputs>
                     <SubmitButton style={{ marginTop: '2rem' }} type="submit">
@@ -208,16 +194,11 @@ export default class CreateMeeting extends Component {
             )}
           </ModalWrapper>
         </Modal>
-      )
+      ) : null
     );
-  }
 }
-CreateMeeting.propTypes = {
-  mentor: PropTypes.object.isRequired,
-  open: PropTypes.bool.isRequired,
-  close: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired,
-};
+
+export default CreateMeeting
 
 const Modal = styled.div`
   position: fixed;
