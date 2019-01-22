@@ -23,7 +23,9 @@ export default class User extends React.Component<IProps, IState> {
   componentDidMount() {
     return api.auth
       .me()
-      .then((user: IUser) => this.reset({ user }))
+      .then((user: IUser) => {
+        this.reset(user);
+      })
       .catch((error: any) => {
         console.error({ error });
         Promise.reject(this.reset({ error }));

@@ -4,33 +4,27 @@ import styled from 'styled-components';
 import { SubmitButton } from '../../styles/comp';
 import * as api from '../../utils/api';
 import CreateMeeting from './CreateMeeting';
-import {IUser, IMentor} from '../../types'
+import { IUser, IMentor } from '../../types';
+import { RouteComponentProps } from '@reach/router';
 
-interface IProps {
-  mentorId?: string
-  user: IUser
+interface IProps extends RouteComponentProps {
+  mentorId?: string;
+  user: IUser;
 }
 
-const Mentor: React.FC<IProps> = ({mentorId = undefined}, user) => {
-  const [mentor, setMentor] = React.useState<IMentor | undefined>(undefined)
-  const [modalOpen, setModalOpen] = React.useState(false)
-  
-  React.useEffect(()=> {
-    (async () => {
-      setMentor(await api.mentors.get(mentorId))
-    })
-  })
+const Mentor: React.FC<IProps> = ({ mentorId = undefined }, user) => {
+  const [mentor, setMentor] = React.useState<IMentor | undefined>(undefined);
+  const [modalOpen, setModalOpen] = React.useState(false);
 
-  if(mentor) {
+  React.useEffect(() => {
+    api.mentors.get(mentorId).then((mentor: IMentor) => setMentor(mentor));
+  }, []);
+
+  if (mentor) {
     const { name, bio, avatar, rate, review, category, career } = mentor;
     return (
       <>
-        <CreateMeeting
-          open={modalOpen}
-          mentor={mentor}
-          user={user}
-          close={() => setModalOpen(false)}
-        />
+        <CreateMeeting open={modalOpen} mentor={mentor} user={user} close={() => setModalOpen(false)} />
         <PageWrapper>
           {name && (
             <>
@@ -84,10 +78,10 @@ const Mentor: React.FC<IProps> = ({mentorId = undefined}, user) => {
     );
   }
 
-return null
-}
+  return null;
+};
 
-export default Mentor
+export default Mentor;
 
 const PageWrapper = styled.div`
   max-width: 110rem;

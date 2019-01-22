@@ -20,6 +20,36 @@ app.set('port', port);
  */
 
 const server = http.createServer(app);
+const io = require('socket.io')(server);
+
+io.on('connection', client => {
+  console.log('User connected');
+
+  client.on('userJoin', name => {
+    console.log(`${name} submitted`);
+    // client.broadcast(`${name} has joined the chat`);
+  });
+
+  client.emit('test', 'message');
+
+  client.on('messageSent', message => {
+    client.broadcast.client.emit(message);
+  });
+  client.on('createMessage', data => {
+    client.emit('newMessage', {
+      user: data.user,
+      message: data.message,
+    });
+  });
+
+  client.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+
+setInterval(() => {
+  io.sockets.emit('test', 'this is a test');
+}, 1000);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -58,9 +88,7 @@ function onError(error) {
     throw error;
   }
 
-  const bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -83,8 +111,6 @@ function onError(error) {
 
 function onListening() {
   const addr = server.address();
-  const bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
+  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }

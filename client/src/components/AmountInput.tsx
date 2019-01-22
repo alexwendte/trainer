@@ -1,17 +1,17 @@
-import * as React from 'react'
-import styled from 'styled-components'
+import * as React from 'react';
+import styled from 'styled-components';
 
-import { transition } from '../utils/mixins'
-import { isNotNumber } from '../utils/utils'
+import { transition } from '../utils/mixins';
+import { isNotNumber } from '../utils/utils';
 
-interface IProps extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>{
-  inTable?: boolean
-  name?: string
+interface IProps extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
+  inTable?: boolean;
+  name?: string;
 }
 
 interface IState {
-  inputValue: string | number | string[]
-  invalid: boolean
+  inputValue: string | number | string[];
+  invalid: boolean;
 }
 
 export default class AmountInput extends React.Component<IProps, IState> {
@@ -23,69 +23,70 @@ export default class AmountInput extends React.Component<IProps, IState> {
     placeholder: '$3.78',
     readOnly: false,
     value: undefined,
-  }
+  };
 
   state = {
     inputValue: this.props.value || '',
     invalid: false,
-  }
+  };
 
   validateAndGetReturnString = (value: string) => {
-    const dollarParts = value.split('$')
-    const { inTable } = this.props
+    const dollarParts = value.split('$');
+    const { inTable } = this.props;
 
-    let invalid = false
+    let invalid = false;
     if (!inTable && value.includes('-')) {
-      invalid = true
+      invalid = true;
     }
     if (dollarParts.length > 2) {
-      invalid = true
+      invalid = true;
     }
-    const noDollar = dollarParts.length === 2 ? dollarParts[0] + dollarParts[1] : dollarParts[0]
+    const noDollar = dollarParts.length === 2 ? dollarParts[0] + dollarParts[1] : dollarParts[0];
     if (value.split('-').length > 2) {
-      invalid = true
+      invalid = true;
     }
-    const noMinusOrDollar = noDollar[0] === '-' ? noDollar.substr(1) : noDollar
+    const noMinusOrDollar = noDollar[0] === '-' ? noDollar.substr(1) : noDollar;
     if (isNotNumber(noMinusOrDollar)) {
-      invalid = true
+      invalid = true;
     }
 
     const withMinusAndDollar = (v: string): string => {
       if (v === '$' || v === '-' || v === '') {
-        return v
+        return v;
       }
-      return `${v.includes('-') ? '-' : ''}$${noMinusOrDollar}`
-    }
-    return { invalid, returnString: withMinusAndDollar(value) }
-  }
+      return `${v.includes('-') ? '-' : ''}$${noMinusOrDollar}`;
+    };
+    return { invalid, returnString: withMinusAndDollar(value) };
+  };
   handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-    ev.preventDefault()
-    const { value } = ev.currentTarget
-    const { invalid, returnString } = this.validateAndGetReturnString(value)
+    ev.preventDefault();
+    const { value } = ev.currentTarget;
+    const { invalid, returnString } = this.validateAndGetReturnString(value);
     if (invalid) {
       // Change this quickly so the animation restarts
       this.setState({ invalid: false }, () => {
-        this.setState({ invalid: true })
-      })
+        this.setState({ invalid: true });
+      });
     } else {
-      this.setState({ inputValue: returnString, invalid: false })
+      this.setState({ inputValue: returnString, invalid: false });
     }
-  }
+  };
 
   handleBlur = () => {
     this.setState(state => {
-      const noDollar = state.inputValue.replace('$', '')
-      const formatted = `$${parseFloat(noDollar).toFixed(2)}`
+      const stringState = state.toString();
+      const noDollar = stringState.replace('$', '');
+      const formatted = `$${parseFloat(noDollar).toFixed(2)}`;
       if (state.inputValue === '$') {
-        return { inputValue: '', invalid: true }
+        return { inputValue: '', invalid: true };
       }
-      return { inputValue: formatted, invalid: false }
-    })
-  }
+      return { inputValue: formatted, invalid: false };
+    });
+  };
 
   render() {
-    const { readOnly, className, ...rest } = this.props
-    const { inputValue, invalid } = this.state
+    const { readOnly, className, ...rest } = this.props;
+    const { inputValue, invalid } = this.state;
     return (
       <StyledInput
         {...rest}
@@ -93,13 +94,13 @@ export default class AmountInput extends React.Component<IProps, IState> {
         onChange={this.handleChange}
         className={`${className || ''} ${invalid ? 'invalid' : ''} `}
         onBlur={this.handleBlur}
-        onClick={ev => !readOnly && ev.stopPropagation()}
+        onClick={(ev: any) => !readOnly && ev.stopPropagation()}
         readOnly={readOnly}
       />
-    )
+    );
   }
 }
-const StyledInput = styled.input`
+const StyledInput: any = styled.input`
   @keyframes invalid {
     0% {
       transform: translateX(0);
@@ -124,4 +125,4 @@ const StyledInput = styled.input`
     animation-name: invalid;
     animation-duration: 0.5s;
   }
-`
+`;

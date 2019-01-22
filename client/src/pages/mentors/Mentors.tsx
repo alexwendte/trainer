@@ -4,64 +4,64 @@ import { SubmitButton } from '../../styles/comp';
 import { IMentor } from '../../types';
 import * as api from '../../utils/api';
 import MentorCard from './MentorCard';
+import { RouteComponentProps } from '@reach/router';
+import { Link } from '../../components/Elements';
 
+type SortTypes = 'review' | 'lowest' | 'highest';
 
-
-type SortTypes = 'review' | 'lowest' | 'highest'
-
-const Mentors: React.FC = () => {
+const Mentors: React.FC<RouteComponentProps> = () => {
   const [currentSortStrategy, setCurrentSortStrategy] = React.useState<SortTypes>('review');
   const [mentors, setMentors] = React.useState<IMentor[]>([]);
   const [sortedMentors, setSortedMentors] = React.useState<IMentor[]>([]);
 
   React.useEffect(() => {
-    (async () => {
-      const apiMentors: IMentor[] = await api.mentors.get();
+    api.mentors.get().then((apiMentors: IMentor[]) => {
       setMentors(apiMentors);
-      setSortedMentors(apiMentors);
-      sort({ type: 'review' });
-    })();
+      sort({ type: 'review', mentorsToSort: apiMentors });
+    });
   }, []);
 
   const handleCategoryChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = ev.currentTarget;
 
-    const newSortedMentros = mentors.filter(
+    const newSortedMentors = mentors.filter(
       mentor => mentor.category && mentor.category.toLowerCase().includes(value.toLowerCase())
     );
-    setSortedMentors(newSortedMentros)
+    setSortedMentors(newSortedMentors);
   };
 
-  const sort = ({ type }: {type: SortTypes}) => {
-      const newMentors = sortedMentors.sort((prev, next) => {
-        switch (type) {
+  const sort = ({ type, mentorsToSort }: { type: SortTypes; mentorsToSort?: IMentor[] }) => {
+    const newMentors = (mentorsToSort || mentors).sort((prev, next) => {
+      switch (type) {
+        case 'review':
+          if (!prev.review) return 1;
+          if (prev.review < next.review) return 1;
+          return -1;
 
-          case 'review':
-            if (!prev.review) return 1;
-            if (prev.review < next.review) return 1;
-            return -1;
+        case 'lowest':
+          if (prev.rate >= next.rate) return 1;
+          return -1;
 
-          case 'lowest':
-            if (prev.rate >= next.rate) return 1;
-            return -1;
+        case 'highest':
+          if (prev.rate <= next.rate) return 1;
+          return -1;
 
-          case 'highest':
-            if (prev.rate <= next.rate) return 1;
-            return -1;
-
-          default:
-            return 1
-        }
-      });
-      setSortedMentors(newMentors);
-      setCurrentSortStrategy(type);
-      return { sortedMentors: newMentors, currentSortStrategy: type };
+        default:
+          return 1;
+      }
+    });
+    setSortedMentors(newMentors);
+    setCurrentSortStrategy(type);
+    return { sortedMentors: newMentors, currentSortStrategy: type };
   };
 
   return (
     <MentorsWrapper>
-      <Heading>Let's Find You a Mentor!</Heading>
-      {sortedMentors && (
+      <Heading>
+        Let's Find You a Mentor!<Link to="/chat">Chat with one!</Link>
+      </Heading>
+
+      {mentors.length > 0 && (
         <>
           <InputGroup>
             <SubHeading id="category">Filter by a Specialty</SubHeading>

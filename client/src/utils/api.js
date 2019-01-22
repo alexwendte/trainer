@@ -30,7 +30,8 @@ const auth = {
     requests.get('users/logout');
     return Promise.resolve({ user: null });
   },
-  login: form => requests.post('/users/login', form).then(() => {
+  login: form =>
+    requests.post('/users/login', form).then(() => {
       login({ token: 'logged in!' });
     }),
   register: form => requests.post('/users/signup', form),

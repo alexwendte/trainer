@@ -2,31 +2,29 @@ import * as React from 'react';
 import styled from 'styled-components';
 import { SubmitButton } from '../../styles/comp';
 import * as api from '../../utils/api';
-import {IMentor, IFullUser, IMeeting} from '../../types';
+import { IMentor, IFullUser, IMeeting } from '../../types';
 
 interface IProps {
-  meeting: IMeeting,
-  isMentor: boolean
+  meeting: IMeeting;
+  isMentor: boolean;
 }
 
-const Meeting: React.FC<IProps> = ({ meeting, isMentor}) => {
-  const [deleted, setDeleted] =  React.useState<boolean>(false);
+const Meeting: React.FC<IProps> = ({ meeting, isMentor }) => {
+  const [deleted, setDeleted] = React.useState<boolean>(false);
   const [student, setStudent] = React.useState<IFullUser | undefined>(undefined);
   const [mentor, setMentor] = React.useState<IMentor | undefined>(undefined);
 
-  React.useEffect(()=> {
-    (async () => {
-      const {meetingStudent, meetingMentor} = meeting
-      const studentPromise = api.users.get(meetingStudent._id)
-      const mentorPromise = api.users.get(meetingMentor._id)
-      const [student, mentor] = await Promise.all([studentPromise, mentorPromise]);
-
+  React.useEffect(() => {
+    const { meetingStudent, meetingMentor } = meeting;
+    const studentPromise = api.users.get(meetingStudent._id);
+    const mentorPromise = api.users.get(meetingMentor._id);
+    Promise.all([studentPromise, mentorPromise]).then(([student, mentor]) => {
       setStudent(student);
       setMentor(mentor);
-    })
-  })
+    });
+  }, []);
 
-  const handleStatusChange = async ({ status }: {status: boolean}) => {
+  const handleStatusChange = async ({ status }: { status: boolean }) => {
     await api.meetings.update(meeting._id, { isAccepted: status });
   };
 
@@ -82,9 +80,9 @@ const Meeting: React.FC<IProps> = ({ meeting, isMentor}) => {
       )}
     </MeetingWrapper>
   );
-}
+};
 
-export default Meeting
+export default Meeting;
 
 const MeetingWrapper = styled.div`
   display: grid;

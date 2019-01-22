@@ -12,12 +12,14 @@ import Mentors from './pages/mentors/Mentors';
 import Profile from './pages/mentors/Profile';
 import Registration from './pages/Registration';
 import './styles/App.css';
+import Chat from './pages/Chat';
 
 const theme = {
   black: '#222222',
   gray: '#354041',
   green: '#0ac775',
   grey: '#354041',
+  primaryBackground: 'hsl(184, 40%, 93%)',
   lightGray: '#f1f3f4',
   lightGrey: '#f1f3f4',
   maxWidth: '1000px',
@@ -50,6 +52,7 @@ const App: React.FC = () => {
                     <Mentors path="/mentors" />
                     <Mentor path="/mentors/:mentorId" user={user} />
                     <Profile path="/profile" user={user} />
+                    <Chat path="/chat" user={user} />
                   </Router>
                   <Router primary={false}>
                     <Footer path="/*" />

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import ReactDOM from 'react-dom';
-import { init } from 'utils/api';
+import * as ReactDOM from 'react-dom';
+import { init } from './utils/api';
 import App from './App';
 import './styles/index.css';
 import './styles/reset.css';
